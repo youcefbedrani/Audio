@@ -32,7 +32,7 @@ services:
     restart: unless-stopped
     # We don't expose 80 directly to host, we go through the main Nginx gateway
     expose:
-      - "80"
+      - "3000"
 
   # Nginx Gateway (Reverse Proxy)
   nginx:
