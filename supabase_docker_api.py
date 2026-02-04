@@ -1199,7 +1199,29 @@ def update_order_status(order_id):
             
     except Exception as e:
         print(f"❌ Error updating order: {e}")
-        return jsonify({"error": str(e)}), 500
+        # Local fallback
+        try:
+            global orders
+            print(f"🔧 FALLBACK: Updating local order {order_id} status...")
+            
+            updated = False
+            for o in orders:
+                if str(o.get('id')) == str(order_id):
+                    o['status'] = status
+                    if confirmation_agent is not None:
+                        o['confirmation_agent'] = confirmation_agent
+                    updated = True
+                    break
+            
+            if updated:
+                save_orders_locally()
+                print(f"✅ FALLBACK SUCCESS: Order updated locally")
+                return jsonify({"success": True, "message": "Order updated locally (cloud unavailable)"})
+            else:
+                return jsonify({"error": "Order not found locally"}), 404
+        except Exception as local_err:
+             print(f"❌ Local fallback failed: {local_err}")
+             return jsonify({"error": str(e)}), 500
 
 @app.route('/api/orders/<order_id>', methods=['PUT', 'DELETE'])
 def update_or_delete_order(order_id):
