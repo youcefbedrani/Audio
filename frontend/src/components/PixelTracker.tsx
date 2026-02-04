@@ -33,11 +33,11 @@ export default function PixelTracker() {
         const fetchPixels = async () => {
             try {
                 const settings = await getSettings();
-                // Sanitize IDs - ensure they are not "null" strings or falsy
-                const fb = (settings.fb_pixel_id && settings.fb_pixel_id !== "null") ? settings.fb_pixel_id : "";
-                const tt = (settings.tiktok_pixel_id && settings.tiktok_pixel_id !== "null") ? settings.tiktok_pixel_id : "";
+                // Sanitize IDs - ensure they are not "null" strings or falsy, and TRIM whitespace
+                const fb = (settings.fb_pixel_id && settings.fb_pixel_id !== "null") ? settings.fb_pixel_id.trim() : "";
+                const tt = (settings.tiktok_pixel_id && settings.tiktok_pixel_id !== "null") ? settings.tiktok_pixel_id.trim() : "";
 
-                console.log("[PixelTracker] Resolved IDs:", { raw_fb: settings.fb_pixel_id, raw_tt: settings.tiktok_pixel_id, final_fb: fb, final_tt: tt });
+                console.log("[PixelTracker] Resolved IDs:", { raw_fb: settings.fb_pixel_id, final_fb: fb });
                 setPixelIds({ fb, tt });
             } catch (err) {
                 console.error("Failed to load pixel settings:", err);

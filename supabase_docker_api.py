@@ -1388,9 +1388,14 @@ def handle_settings():
             if not data:
                 return jsonify({"error": "No data received"}), 400
             
-            # Basic validation
+            # Basic validation and trimming
             settings["fb_pixel_id"] = data.get("fb_pixel_id", settings["fb_pixel_id"])
+            if settings["fb_pixel_id"]:
+                settings["fb_pixel_id"] = str(settings["fb_pixel_id"]).strip()
+
             settings["tiktok_pixel_id"] = data.get("tiktok_pixel_id", settings["tiktok_pixel_id"])
+            if settings["tiktok_pixel_id"]:
+                settings["tiktok_pixel_id"] = str(settings["tiktok_pixel_id"]).strip()
             
             save_settings_locally()
             return jsonify({"success": True, "settings": settings})
