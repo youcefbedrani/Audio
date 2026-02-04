@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإطارات - إطارات الصوت الفنية</title>
+    <meta name="description" content="تصفح مجموعتنا المتنوعة من الإطارات الفنية المصنوعة بأعلى جودة">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Suppress Tailwind CSS production warning
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                theme: {
+                    extend: {}
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+        .frame-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .frame-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="/" class="text-2xl font-bold text-blue-600">🎨 إطارات الصوت الفنية</a>
+                </div>
+                <div class="hidden md:flex space-x-reverse space-x-8">
+                    <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors">الرئيسية</a>
+                    <a href="/frames" class="text-blue-600 font-semibold">الإطارات</a>
+                    <a href="/#about" class="text-gray-700 hover:text-blue-600 transition-colors">حولنا</a>
+                    <a href="/#contact" class="text-gray-700 hover:text-blue-600 transition-colors">اتصل بنا</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-700 hover:text-blue-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="/" class="block px-3 py-2 text-gray-700 hover:text-blue-600">الرئيسية</a>
+                    <a href="/frames" class="block px-3 py-2 text-blue-600 font-semibold">الإطارات</a>
+                    <a href="/#about" class="block px-3 py-2 text-gray-700 hover:text-blue-600">حولنا</a>
+                    <a href="/#contact" class="block px-3 py-2 text-gray-700 hover:text-blue-600">اتصل بنا</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="bg-blue-600 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">مجموعتنا من الإطارات الفنية</h1>
+            <p class="text-xl text-blue-100">اختر من مجموعة متنوعة من الإطارات الفنية المصنوعة بأعلى جودة</p>
+        </div>
+    </header>
+
+    <!-- Filters and Search -->
+    <section class="bg-white py-8 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0">
+                <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="ابحث عن إطار..." 
+                               class="w-full md:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <select id="type-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">جميع الأنواع</option>
+                        <option value="wooden">خشبي</option>
+                        <option value="metal">معدني</option>
+                        <option value="glass">زجاجي</option>
+                        <option value="plastic">بلاستيكي</option>
+                    </select>
+                    <select id="price-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">جميع الأسعار</option>
+                        <option value="0-100">أقل من 100 دج</option>
+                        <option value="100-150">100 - 150 دج</option>
+                        <option value="150-200">150 - 200 دج</option>
+                        <option value="200+">أكثر من 200 دج</option>
+                    </select>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">ترتيب حسب:</span>
+                    <select id="sort-by" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="name">الاسم</option>
+                        <option value="price-low">السعر (من الأقل للأعلى)</option>
+                        <option value="price-high">السعر (من الأعلى للأقل)</option>
+                        <option value="newest">الأحدث</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Frames Grid -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Loading State -->
+        <div id="loading" class="text-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p class="text-gray-600">جاري تحميل الإطارات...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="hidden text-center py-12">
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <p class="font-bold">خطأ في تحميل الإطارات</p>
+                <p class="text-sm" id="error-message"></p>
+            </div>
+            <button onclick="window.location.reload()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                إعادة المحاولة
+            </button>
+        </div>
+
+        <!-- Frames Container -->
+        <div id="frames-container" class="hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900">الإطارات المتاحة</h2>
+                <p class="text-gray-600" id="frames-count">0 إطار</p>
+            </div>
+            
+            <div id="frames-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Frames will be loaded here -->
+            </div>
+        </div>
+
+        <!-- No Results -->
+        <div id="no-results" class="hidden text-center py-12">
+            <div class="text-6xl mb-4">🔍</div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">لم نجد إطارات</h3>
+            <p class="text-gray-600 mb-6">جرب تغيير معايير البحث</p>
+            <button onclick="clearFilters()" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                مسح الفلاتر
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="text-2xl font-bold mb-4">🎨 إطارات الصوت الفنية</div>
+                    <p class="text-gray-400">أنشئ إطارات فنية شخصية مع رموز QR التي ترتبط برسائلك الصوتية</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">روابط سريعة</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="text-gray-400 hover:text-white transition-colors">الرئيسية</a></li>
+                        <li><a href="/frames" class="text-gray-400 hover:text-white transition-colors">الإطارات</a></li>
+                        <li><a href="/#about" class="text-gray-400 hover:text-white transition-colors">حولنا</a></li>
+                        <li><a href="/#contact" class="text-gray-400 hover:text-white transition-colors">اتصل بنا</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">الخدمات</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/frames" class="text-gray-400 hover:text-white transition-colors">تصفح الإطارات</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">طلب إطار</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">تحميل التطبيق</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">الدعم الفني</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">تابعنا</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">فيسبوك</a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">تويتر</a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">إنستغرام</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2024 إطارات الصوت الفنية. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let allFrames = [];
+        let filteredFrames = [];
+
+        // Frame data for demo
+        const frameData = [
+            {
+                id: 1,
+                title: 'إطار خشبي كلاسيكي',
+                description: 'إطار خشبي أنيق مصنوع من خشب البلوط الطبيعي، مثالي للصور العائلية والذكريات الثمينة.',
+                frame_type: 'wooden',
+                price: '150.00',
+                is_available: true,
+                image: null
+            },
+            {
+                id: 2,
+                title: 'إطار معدني عصري',
+                description: 'إطار معدني أنيق بتصميم عصري، مثالي للمكاتب والمنازل العصرية.',
+                frame_type: 'metal',
+                price: '120.00',
+                is_available: true,
+                image: null
+            },
+            {
+                id: 3,
+                title: 'إطار زجاجي شفاف',
+                description: 'إطار زجاجي شفاف أنيق، يبرز جمال الصورة دون إلهاء.',
+                frame_type: 'glass',
+                price: '100.00',
+                is_available: true,
+                image: null
+            },
+            {
+                id: 4,
+                title: 'إطار بلاستيكي ملون',
+                description: 'إطار بلاستيكي بألوان زاهية، مثالي لغرف الأطفال والمساحات المبهجة.',
+                frame_type: 'plastic',
+                price: '80.00',
+                is_available: true,
+                image: null
+            },
+            {
+                id: 5,
+                title: 'إطار خشبي فاخر',
+                description: 'إطار خشبي فاخر منحوت يدوياً، قطعة فنية حقيقية تليق بأهم اللحظات.',
+                frame_type: 'wooden',
+                price: '200.00',
+                is_available: true,
+                image: null
+            },
+            {
+                id: 6,
+                title: 'إطار معدني ذهبي',
+                description: 'إطار معدني مذهب أنيق، يضفي لمسة من الفخامة والأناقة على أي مساحة.',
+                frame_type: 'metal',
+                price: '180.00',
+                is_available: true,
+                image: null
+            }
+        ];
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Load frames
+        async function loadFrames() {
+            try {
+                const response = await fetch('http://localhost:8001/api/frames/', {
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch frames');
+                }
+                const data = await response.json();
+                
+                allFrames = data.results || data;
+                filteredFrames = [...allFrames];
+                
+                displayFrames();
+                setupFilters();
+            } catch (error) {
+                console.error('Error loading frames:', error);
+                // Fallback to local data if API fails
+                allFrames = frameData;
+                filteredFrames = [...allFrames];
+                displayFrames();
+                setupFilters();
+            }
+        }
+
+        // Display frames
+        function displayFrames() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const framesContainer = document.getElementById('frames-container');
+            const noResults = document.getElementById('no-results');
+            const framesGrid = document.getElementById('frames-grid');
+            const framesCount = document.getElementById('frames-count');
+
+            loading.classList.add('hidden');
+            error.classList.add('hidden');
+
+            if (filteredFrames.length === 0) {
+                framesContainer.classList.add('hidden');
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            framesContainer.classList.remove('hidden');
+            noResults.classList.add('hidden');
+
+            framesCount.textContent = `${filteredFrames.length} إطار`;
+
+            framesGrid.innerHTML = filteredFrames.map(frame => `
+                <div class="frame-card bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">${frame.title}</h3>
+                        <p class="text-gray-600 mb-4 text-sm">${frame.description}</p>
+                        
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-2xl font-bold text-blue-600">${frame.price} دج</span>
+                            <span class="px-3 py-1 rounded-full text-sm ${frame.is_available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${frame.is_available ? 'متاح' : 'غير متاح'}
+                            </span>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <span class="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
+                                ${frame.frame_type}
+                            </span>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <a href="/frames/${frame.id}" 
+                               class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors text-center block">
+                                عرض التفاصيل
+                            </a>
+                            ${frame.is_available ? `
+                                <a href="/frames/${frame.id}" 
+                                   class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-center block">
+                                    طلب الإطار
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Setup filters
+        function setupFilters() {
+            document.getElementById('search-input').addEventListener('input', applyFilters);
+            document.getElementById('type-filter').addEventListener('change', applyFilters);
+            document.getElementById('price-filter').addEventListener('change', applyFilters);
+            document.getElementById('sort-by').addEventListener('change', applyFilters);
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const typeFilter = document.getElementById('type-filter').value;
+            const priceFilter = document.getElementById('price-filter').value;
+            const sortBy = document.getElementById('sort-by').value;
+
+            filteredFrames = allFrames.filter(frame => {
+                const matchesSearch = frame.title.toLowerCase().includes(searchTerm) || 
+                                    frame.description.toLowerCase().includes(searchTerm);
+                const matchesType = !typeFilter || frame.frame_type === typeFilter;
+                const matchesPrice = !priceFilter || checkPriceRange(frame.price, priceFilter);
+                
+                return matchesSearch && matchesType && matchesPrice;
+            });
+
+            // Sort frames
+            filteredFrames.sort((a, b) => {
+                switch (sortBy) {
+                    case 'name':
+                        return a.title.localeCompare(b.title);
+                    case 'price-low':
+                        return parseFloat(a.price) - parseFloat(b.price);
+                    case 'price-high':
+                        return parseFloat(b.price) - parseFloat(a.price);
+                    case 'newest':
+                        return b.id - a.id;
+                    default:
+                        return 0;
+                }
+            });
+
+            displayFrames();
+        }
+
+        // Check price range
+        function checkPriceRange(price, range) {
+            const priceNum = parseFloat(price);
+            switch (range) {
+                case '0-100':
+                    return priceNum < 100;
+                case '100-150':
+                    return priceNum >= 100 && priceNum <= 150;
+                case '150-200':
+                    return priceNum >= 150 && priceNum <= 200;
+                case '200+':
+                    return priceNum > 200;
+                default:
+                    return true;
+            }
+        }
+
+        // Clear filters
+        function clearFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('type-filter').value = '';
+            document.getElementById('price-filter').value = '';
+            document.getElementById('sort-by').value = 'name';
+            applyFilters();
+        }
+
+        // Show error
+        function showError(message) {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const framesContainer = document.getElementById('frames-container');
+            const noResults = document.getElementById('no-results');
+
+            loading.classList.add('hidden');
+            framesContainer.classList.add('hidden');
+            noResults.classList.add('hidden');
+            error.classList.remove('hidden');
+            document.getElementById('error-message').textContent = message;
+        }
+
+        // Load frames when page loads
+        document.addEventListener('DOMContentLoaded', loadFrames);
+    </script>
+</body>
+</html>

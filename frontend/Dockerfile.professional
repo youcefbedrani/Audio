@@ -1,0 +1,15 @@
+# Use Nginx Alpine for professional static hosting
+FROM nginx:alpine
+
+# Copy professional static files
+COPY public/ /usr/share/nginx/html/
+
+# Copy professional nginx configuration
+COPY nginx.professional.conf /etc/nginx/nginx.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
+

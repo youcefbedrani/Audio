@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إطارات الصوت الفنية - الصفحة الرئيسية</title>
+    <meta name="description" content="أنشئ إطارات فنية شخصية مع رموز QR التي ترتبط برسائلك الصوتية">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Suppress Tailwind CSS production warning
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                theme: {
+                    extend: {}
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .hero-bg { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div class="flex items-center">
+                    <a href="/" class="text-2xl font-bold text-blue-600">🎨 إطارات الصوت الفنية</a>
+                </div>
+                <nav class="hidden md:flex space-x-reverse space-x-8">
+                    <a href="/frames" class="text-gray-700 hover:text-blue-600 transition-colors">تصفح الإطارات</a>
+                    <a href="#about" class="text-gray-700 hover:text-blue-600 transition-colors">حولنا</a>
+                    <a href="#contact" class="text-gray-700 hover:text-blue-600 transition-colors">اتصل بنا</a>
+                </nav>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-700 hover:text-blue-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="/frames" class="block px-3 py-2 text-gray-700 hover:text-blue-600">تصفح الإطارات</a>
+                    <a href="#about" class="block px-3 py-2 text-gray-700 hover:text-blue-600">حولنا</a>
+                    <a href="#contact" class="block px-3 py-2 text-gray-700 hover:text-blue-600">اتصل بنا</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-bg text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                أحي فنك بالصوت
+                <span class="block text-blue-200">مع الرسائل الصوتية</span>
+            </h1>
+            <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+                أنشئ إطارات فنية شخصية مع رموز QR التي ترتبط برسائلك الصوتية. مثالية للهدايا والذكريات واللحظات الخاصة.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/frames" class="inline-flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg hover:bg-gray-50 transition-colors text-lg font-semibold">
+                    تصفح الإطارات
+                    <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 19-7-7 7-7"></path>
+                        <path d="M19 12H5"></path>
+                    </svg>
+                </a>
+                <a href="#how-it-works" class="inline-flex items-center px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-lg font-semibold">
+                    كيف يعمل
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">كيف يعمل النظام</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">أنشئ إطارك الفني الصوتي المخصص في خطوات بسيطة</p>
+            </div>
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold text-blue-600">1</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">اختر الإطار</h3>
+                    <p class="text-gray-600">تصفح مجموعتنا من الإطارات الفنية الجميلة واختر الأنسب لرسالتك.</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold text-green-600">2</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">سجل الصوت</h3>
+                    <p class="text-gray-600">سجل رسالتك الشخصية أو ارفع ملف صوتي ليرافق إطارك.</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold text-purple-600">3</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">اطلب الآن</h3>
+                    <p class="text-gray-600">أدخل بياناتك واطلب إطارك. سنقوم بإنشاء رمز QR فريد لإطارك.</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold text-orange-600">4</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">شارك واستمتع</h3>
+                    <p class="text-gray-600">عندما يمسح شخص ما رمز QR بتطبيقنا المحمول، سوف يسمع رسالتك الصوتية.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">لماذا تختار إطار الصوت الفني؟</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">استمتع بالمزج المثالي بين الفن والتكنولوجيا</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
+                            <path d="M12 18h.01"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">تطبيق محمول سهل</h3>
+                    <p class="text-gray-600">مسح رمز QR بسيط مع تطبيقنا المحمول البديهي. لا حاجة لإعداد معقد.</p>
+                </div>
+                <div class="bg-white rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"></path>
+                            <circle cx="12" cy="13" r="3"></circle>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">إطارات عالية الجودة</h3>
+                    <p class="text-gray-600">إطارات جميلة ومتينة مصنوعة من مواد عالية الجودة. مثالية لأي مساحة.</p>
+                </div>
+                <div class="bg-white rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">صوت واضح وضوح البلور</h3>
+                    <p class="text-gray-600">تخزين صوتي عالي الجودة يضمن أن رسالتك تبدو مثالية في كل مرة.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-blue-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">هل أنت مستعد لإنشاء إطارك الفني الصوتي؟</h2>
+            <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">ابدأ في تصفح مجموعتنا وأنشئ هدية فريدة ستُقدر إلى الأبد.</p>
+            <a href="/frames" class="inline-flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg hover:bg-gray-50 transition-colors text-lg font-semibold">
+                ابدأ الآن
+                <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 19-7-7 7-7"></path>
+                    <path d="M19 12H5"></path>
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">حول إطارات الصوت الفنية</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    نحن نؤمن بأن كل لحظة تستحق أن تُحفظ بطريقة فريدة. إطاراتنا الفنية تجمع بين الجمال البصري وقوة الصوت لخلق تجارب لا تُنسى.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">رؤيتنا</h3>
+                    <p class="text-gray-600 mb-6">
+                        نهدف إلى إحياء فن الحفظ والتذكير من خلال دمج التكنولوجيا الحديثة مع الحرفية التقليدية. 
+                        كل إطار نصنعه يحمل قصة، وكل قصة تستحق أن تُسمع.
+                    </p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">مهمتنا</h3>
+                    <p class="text-gray-600">
+                        نسعى لجعل التكنولوجيا في خدمة العواطف الإنسانية، وخلق طرق جديدة للتواصل والمشاركة 
+                        التي تعزز الروابط بين الناس وتخلق ذكريات دائمة.
+                    </p>
+                </div>
+                <div class="bg-gray-100 rounded-lg p-8 text-center">
+                    <div class="text-6xl mb-4">🎨</div>
+                    <h4 class="text-xl font-semibold text-gray-900 mb-2">إطارات فنية مخصصة</h4>
+                    <p class="text-gray-600">كل إطار مصنوع بعناية فائقة ليعكس شخصيتك وذوقك الفني</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">تواصل معنا</h2>
+                <p class="text-xl text-gray-600">نحن هنا لمساعدتك في إنشاء إطارك الفني المثالي</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg p-8 text-center shadow-sm">
+                    <div class="text-4xl mb-4">📞</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">اتصل بنا</h3>
+                    <p class="text-gray-600">0555-123-456</p>
+                </div>
+                <div class="bg-white rounded-lg p-8 text-center shadow-sm">
+                    <div class="text-4xl mb-4">📧</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">راسلنا</h3>
+                    <p class="text-gray-600">info@audioframes.com</p>
+                </div>
+                <div class="bg-white rounded-lg p-8 text-center shadow-sm">
+                    <div class="text-4xl mb-4">📍</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">موقعنا</h3>
+                    <p class="text-gray-600">الجزائر العاصمة، الجزائر</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="text-2xl font-bold mb-4">🎨 إطارات الصوت الفنية</div>
+                    <p class="text-gray-400">أنشئ إطارات فنية شخصية مع رموز QR التي ترتبط برسائلك الصوتية</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">روابط سريعة</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="text-gray-400 hover:text-white transition-colors">الرئيسية</a></li>
+                        <li><a href="/frames" class="text-gray-400 hover:text-white transition-colors">الإطارات</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white transition-colors">حولنا</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white transition-colors">اتصل بنا</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">الخدمات</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/frames" class="text-gray-400 hover:text-white transition-colors">تصفح الإطارات</a></li>
+                        <li><a href="/frames" class="text-gray-400 hover:text-white transition-colors">طلب إطار</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">تحميل التطبيق</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">الدعم الفني</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">تابعنا</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">فيسبوك</a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">تويتر</a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">إنستغرام</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2024 إطارات الصوت الفنية. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

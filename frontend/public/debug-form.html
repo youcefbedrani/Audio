@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Form Values</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .result { background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Form Value Debugger</h1>
+    
+    <form id="test-form">
+        <input type="text" id="firstName" name="firstName" placeholder="First Name" value="محمد">
+        <input type="text" id="lastName" name="lastName" placeholder="Last Name" value="أحمد">
+        <input type="tel" id="phone" name="phone" placeholder="Phone" value="0555123456">
+        <button type="submit">Test Form Submission</button>
+    </form>
+    
+    <div id="results"></div>
+    
+    <script>
+        document.getElementById('test-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+            
+            // Method 1: getElementById
+            const fn1 = document.getElementById('firstName');
+            const ln1 = document.getElementById('lastName');
+            const ph1 = document.getElementById('phone');
+            
+            let html = '<div class="result">';
+            html += '<h3>Method 1: getElementById</h3>';
+            html += '<p>firstNameEl: ' + (fn1 ? 'Found' : 'NOT FOUND') + '</p>';
+            html += '<p>Value: ' + (fn1 ? fn1.value : 'N/A') + '</p>';
+            html += '<p>lastNameEl: ' + (ln1 ? 'Found' : 'NOT FOUND') + '</p>';
+            html += '<p>Value: ' + (ln1 ? ln1.value : 'N/A') + '</p>';
+            html += '<p>phoneEl: ' + (ph1 ? 'Found' : 'NOT FOUND') + '</p>';
+            html += '<p>Value: ' + (ph1 ? ph1.value : 'N/A') + '</p>';
+            html += '</div>';
+            
+            // Method 2: FormData
+            const form = document.getElementById('test-form');
+            const formData = new FormData(form);
+            html += '<div class="result">';
+            html += '<h3>Method 2: FormData</h3>';
+            html += '<p>firstName: ' + (formData.get('firstName') || 'N/A') + '</p>';
+            html += '<p>lastName: ' + (formData.get('lastName') || 'N/A') + '</p>';
+            html += '<p>phone: ' + (formData.get('phone') || 'N/A') + '</p>';
+            html += '</div>';
+            
+            // Method 3: form.elements
+            html += '<div class="result">';
+            html += '<h3>Method 3: form.elements</h3>';
+            html += '<p>firstName: ' + (form.elements.firstName ? form.elements.firstName.value : 'N/A') + '</p>';
+            html += '<p>lastName: ' + (form.elements.lastName ? form.elements.lastName.value : 'N/A') + '</p>';
+            html += '<p>phone: ' + (form.elements.phone ? form.elements.phone.value : 'N/A') + '</p>';
+            html += '</div>';
+            
+            // Save to sessionStorage
+            const testData = {
+                firstName: form.elements.firstName ? form.elements.firstName.value : '',
+                lastName: form.elements.lastName ? form.elements.lastName.value : '',
+                phone: form.elements.phone ? form.elements.phone.value : '',
+                customerName: (form.elements.firstName?.value || '') + ' ' + (form.elements.lastName?.value || '')
+            };
+            
+            sessionStorage.setItem('orderData', JSON.stringify(testData));
+            html += '<div class="result">';
+            html += '<h3>Saved to sessionStorage:</h3>';
+            html += '<pre>' + JSON.stringify(testData, null, 2) + '</pre>';
+            html += '</div>';
+            
+            results.innerHTML = html;
+        });
+    </script>
+</body>
+</html>
+

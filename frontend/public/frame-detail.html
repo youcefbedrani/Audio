@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل الإطار - إطارات الصوت الفنية</title>
+    <meta name="description" content="اطلب إطارك الفني المخصص مع رسالة صوتية شخصية">
+    <!-- Tailwind CSS - using Play CDN for static HTML (acceptable for development) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="/" class="text-2xl font-bold text-blue-600">🎨 إطارات الصوت الفنية</a>
+                </div>
+                <div class="hidden md:flex space-x-reverse space-x-8">
+                    <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors">الرئيسية</a>
+                    <a href="/frames" class="text-gray-700 hover:text-blue-600 transition-colors">الإطارات</a>
+                    <a href="/#about" class="text-gray-700 hover:text-blue-600 transition-colors">حولنا</a>
+                    <a href="/#contact" class="text-gray-700 hover:text-blue-600 transition-colors">اتصل بنا</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-700 hover:text-blue-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="/" class="block px-3 py-2 text-gray-700 hover:text-blue-600">الرئيسية</a>
+                    <a href="/frames" class="block px-3 py-2 text-gray-700 hover:text-blue-600">الإطارات</a>
+                    <a href="/#about" class="block px-3 py-2 text-gray-700 hover:text-blue-600">حولنا</a>
+                    <a href="/#contact" class="block px-3 py-2 text-gray-700 hover:text-blue-600">اتصل بنا</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Loading State -->
+        <div id="loading" class="text-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p class="text-gray-600">جاري تحميل تفاصيل الإطار...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="hidden text-center py-12">
+            <div class="text-6xl mb-4">❌</div>
+            <h1 class="text-2xl font-bold text-gray-900 mb-4">الإطار غير موجود</h1>
+            <a href="/frames" class="text-blue-600 hover:text-blue-800">العودة للإطارات</a>
+        </div>
+
+        <!-- Frame Details and Order Form -->
+        <div id="frame-content" class="hidden">
+            <!-- Frame Information -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                <!-- Frame Image -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="aspect-square bg-gray-200 flex items-center justify-center">
+                        <div class="text-center text-gray-500">
+                            <div class="text-6xl mb-4">🖼️</div>
+                            <p>صورة الإطار</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Frame Details -->
+                <div class="bg-white rounded-lg shadow-md p-8">
+                    <h1 id="frame-title" class="text-3xl font-bold text-gray-900 mb-4"></h1>
+                    <p id="frame-description" class="text-gray-600 text-lg mb-6"></p>
+
+                    <div class="space-y-4 mb-6">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700 font-medium">النوع:</span>
+                            <span id="frame-type" class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm"></span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700 font-medium">الحالة:</span>
+                            <span id="frame-availability" class="px-3 py-1 rounded-full text-sm"></span>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="text-2xl font-bold text-gray-900">السعر:</span>
+                            <span id="frame-price" class="text-4xl font-bold text-blue-600"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Form -->
+            <div class="bg-white rounded-lg shadow-md p-8 mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">طلب الإطار - الدفع عند الاستلام</h2>
+                
+                <form id="order-form" class="space-y-6">
+                    <!-- Customer Information -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-gray-900">معلومات العميل</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="firstName" class="block text-sm font-medium text-gray-700 mb-2">الاسم الأول *</label>
+                                <input type="text" id="firstName" name="firstName" required 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label for="lastName" class="block text-sm font-medium text-gray-700 mb-2">اسم العائلة *</label>
+                                <input type="text" id="lastName" name="lastName" required 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">رقم الهاتف *</label>
+                            <input type="tel" id="phone" name="phone" required 
+                                   placeholder="05xxxxxxxx"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="wilaya" class="block text-sm font-medium text-gray-700 mb-2">الولاية *</label>
+                                <select id="wilaya" name="wilaya" required 
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">اختر الولاية</option>
+                                    <option value="الجزائر">الجزائر</option>
+                                    <option value="وهران">وهران</option>
+                                    <option value="قسنطينة">قسنطينة</option>
+                                    <option value="البليدة">البليدة</option>
+                                    <option value="سطيف">سطيف</option>
+                                    <option value="عنابة">عنابة</option>
+                                    <option value="تيزي وزو">تيزي وزو</option>
+                                    <option value="بجاية">بجاية</option>
+                                    <option value="باتنة">باتنة</option>
+                                    <option value="بشار">بشار</option>
+                                    <option value="تبسة">تبسة</option>
+                                    <option value="تلمسان">تلمسان</option>
+                                    <option value="الجلفة">الجلفة</option>
+                                    <option value="جيجل">جيجل</option>
+                                    <option value="سطيف">سطيف</option>
+                                    <option value="سعيدة">سعيدة</option>
+                                    <option value="سكيكدة">سكيكدة</option>
+                                    <option value="سيدي بلعباس">سيدي بلعباس</option>
+                                    <option value="عنابة">عنابة</option>
+                                    <option value="قالمة">قالمة</option>
+                                    <option value="قسنطينة">قسنطينة</option>
+                                    <option value="المدية">المدية</option>
+                                    <option value="مستغانم">مستغانم</option>
+                                    <option value="المسيلة">المسيلة</option>
+                                    <option value="معسكر">معسكر</option>
+                                    <option value="ورقلة">ورقلة</option>
+                                    <option value="وهران">وهران</option>
+                                    <option value="البيض">البيض</option>
+                                    <option value="إليزي">إليزي</option>
+                                    <option value="برج بوعريريج">برج بوعريريج</option>
+                                    <option value="بومرداس">بومرداس</option>
+                                    <option value="الطارف">الطارف</option>
+                                    <option value="تندوف">تندوف</option>
+                                    <option value="تيسمسيلت">تيسمسيلت</option>
+                                    <option value="الوادي">الوادي</option>
+                                    <option value="خنشلة">خنشلة</option>
+                                    <option value="سوق أهراس">سوق أهراس</option>
+                                    <option value="تيبازة">تيبازة</option>
+                                    <option value="ميلة">ميلة</option>
+                                    <option value="عين الدفلى">عين الدفلى</option>
+                                    <option value="النعامة">النعامة</option>
+                                    <option value="عين تيموشنت">عين تيموشنت</option>
+                                    <option value="غرداية">غرداية</option>
+                                    <option value="غليزان">غليزان</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="baladiya" class="block text-sm font-medium text-gray-700 mb-2">البلدية *</label>
+                                <input type="text" id="baladiya" name="baladiya" required 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="address" class="block text-sm font-medium text-gray-700 mb-2">العنوان التفصيلي *</label>
+                            <textarea id="address" name="address" required rows="3"
+                                      placeholder="شارع، رقم المنزل، الحي، أي معلومات إضافية للوصول"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Audio Recording -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-gray-900">تسجيل رسالة صوتية</h3>
+                        <p class="text-gray-600">يمكنك تسجيل رسالة صوتية شخصية لتربطها بالإطار</p>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="text-center space-y-4">
+                                <button type="button" id="start-recording" 
+                                        class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
+                                    🎤 بدء التسجيل
+                                </button>
+                                <button type="button" id="stop-recording" disabled
+                                        class="bg-gray-400 text-white px-6 py-3 rounded-lg cursor-not-allowed">
+                                    ⏹️ إيقاف التسجيل
+                                </button>
+                                
+                                <div id="recording-status" class="hidden">
+                                    <div class="text-red-600 font-semibold">
+                                        🔴 جاري التسجيل...
+                                    </div>
+                                </div>
+                                
+                                <div id="recording-complete" class="hidden">
+                                    <div class="text-green-600 font-semibold">
+                                        ✅ تم تسجيل الرسالة الصوتية
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Terms and Conditions -->
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <input type="checkbox" id="terms" name="terms" required 
+                                   class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="terms" class="mr-2 text-sm text-gray-700">
+                                أوافق على <a href="#" class="text-blue-600 hover:text-blue-800">الشروط والأحكام</a> 
+                                و <a href="#" class="text-blue-600 hover:text-blue-800">سياسة الخصوصية</a> *
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                        <button type="submit" id="submit-order"
+                                class="bg-green-600 text-white px-8 py-4 rounded-lg hover:bg-green-700 transition-colors text-lg font-semibold">
+                            تأكيد الطلب - الدفع عند الاستلام
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="text-2xl font-bold">🎨 إطارات الصوت الفنية</div>
+                </div>
+                <p class="text-gray-400 mb-4">نجمع الفن والصوت معاً لتجارب لا تُنسى</p>
+                <div class="flex justify-center space-x-reverse space-x-6">
+                    <a href="/" class="text-gray-400 hover:text-white">الرئيسية</a>
+                    <a href="/frames" class="text-gray-400 hover:text-white">الإطارات</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Frame data
+        const frameData = {
+            '1': {
+                title: 'إطار خشبي كلاسيكي',
+                description: 'إطار خشبي أنيق مصنوع من خشب البلوط الطبيعي، مثالي للصور العائلية والذكريات الثمينة.',
+                frame_type: 'خشبي',
+                price: '150.00',
+                is_available: true
+            },
+            '2': {
+                title: 'إطار معدني عصري',
+                description: 'إطار معدني أنيق بتصميم عصري، مثالي للمكاتب والمنازل العصرية.',
+                frame_type: 'معدني',
+                price: '120.00',
+                is_available: true
+            },
+            '3': {
+                title: 'إطار زجاجي شفاف',
+                description: 'إطار زجاجي شفاف أنيق، يبرز جمال الصورة دون إلهاء.',
+                frame_type: 'زجاجي',
+                price: '100.00',
+                is_available: true
+            },
+            '4': {
+                title: 'إطار بلاستيكي ملون',
+                description: 'إطار بلاستيكي بألوان زاهية، مثالي لغرف الأطفال والمساحات المبهجة.',
+                frame_type: 'بلاستيكي',
+                price: '80.00',
+                is_available: true
+            },
+            '5': {
+                title: 'إطار خشبي فاخر',
+                description: 'إطار خشبي فاخر منحوت يدوياً، قطعة فنية حقيقية تليق بأهم اللحظات.',
+                frame_type: 'خشبي',
+                price: '200.00',
+                is_available: true
+            },
+            '6': {
+                title: 'إطار معدني ذهبي',
+                description: 'إطار معدني مذهب أنيق، يضفي لمسة من الفخامة والأناقة على أي مساحة.',
+                frame_type: 'معدني',
+                price: '180.00',
+                is_available: true
+            }
+        };
+
+        let mediaRecorder;
+        let audioChunks = [];
+        let recordedAudio = null;
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Load frame details
+        async function loadFrameDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const frameId = urlParams.get('id') || window.location.pathname.split('/').pop();
+            
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const frameContent = document.getElementById('frame-content');
+
+            if (!frameId) {
+                loading.classList.add('hidden');
+                error.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                // Try to fetch from API first
+                const response = await fetch(`http://localhost:8001/api/frames/${frameId}/`, {
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                if (response.ok) {
+                    const frame = await response.json();
+                    
+                    // Update frame information
+                    document.getElementById('frame-title').textContent = frame.title;
+                    document.getElementById('frame-description').textContent = frame.description;
+                    document.getElementById('frame-type').textContent = frame.frame_type;
+                    document.getElementById('frame-price').textContent = frame.price + ' دج';
+                    
+                    const availabilitySpan = document.getElementById('frame-availability');
+                    if (frame.is_available) {
+                        availabilitySpan.textContent = 'متاح';
+                        availabilitySpan.className = 'px-3 py-1 rounded-full text-sm bg-green-100 text-green-800';
+                    } else {
+                        availabilitySpan.textContent = 'غير متاح';
+                        availabilitySpan.className = 'px-3 py-1 rounded-full text-sm bg-red-100 text-red-800';
+                    }
+
+                    loading.classList.add('hidden');
+                    frameContent.classList.remove('hidden');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error fetching frame from API:', error);
+            }
+
+            // Fallback to local data
+            if (frameData[frameId]) {
+                const frame = frameData[frameId];
+                
+                // Update frame information
+                document.getElementById('frame-title').textContent = frame.title;
+                document.getElementById('frame-description').textContent = frame.description;
+                document.getElementById('frame-type').textContent = frame.frame_type;
+                document.getElementById('frame-price').textContent = frame.price + ' دج';
+                
+                const availabilitySpan = document.getElementById('frame-availability');
+                if (frame.is_available) {
+                    availabilitySpan.textContent = 'متاح';
+                    availabilitySpan.className = 'px-3 py-1 rounded-full text-sm bg-green-100 text-green-800';
+                } else {
+                    availabilitySpan.textContent = 'غير متاح';
+                    availabilitySpan.className = 'px-3 py-1 rounded-full text-sm bg-red-100 text-red-800';
+                }
+
+                loading.classList.add('hidden');
+                frameContent.classList.remove('hidden');
+            } else {
+                loading.classList.add('hidden');
+                error.classList.remove('hidden');
+            }
+        }
+
+        // Audio recording functionality
+        function setupAudioRecording() {
+            document.getElementById('start-recording').addEventListener('click', async () => {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        recordedAudio = new Blob(audioChunks, { type: 'audio/webm' });
+                        document.getElementById('recording-complete').classList.remove('hidden');
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+                    
+                    // Update UI
+                    document.getElementById('start-recording').disabled = true;
+                    document.getElementById('stop-recording').disabled = false;
+                    document.getElementById('recording-status').classList.remove('hidden');
+                    
+                } catch (error) {
+                    alert('خطأ في الوصول للميكروفون: ' + error.message);
+                }
+            });
+
+            document.getElementById('stop-recording').addEventListener('click', () => {
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                    
+                    // Update UI
+                    document.getElementById('start-recording').disabled = false;
+                    document.getElementById('stop-recording').disabled = true;
+                    document.getElementById('recording-status').classList.add('hidden');
+                }
+            });
+        }
+
+        // Form submission
+        function setupOrderForm() {
+            const form = document.getElementById('order-form');
+            if (!form) {
+                console.error('❌ Order form not found!');
+                return;
+            }
+            
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('=== FORM SUBMISSION STARTED ===');
+                
+                const submitButton = document.getElementById('submit-order');
+                if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = 'جاري إرسال الطلب...';
+                }
+                
+                try {
+                    // CRITICAL: Capture form values IMMEDIATELY - BEFORE ANY ASYNC OPERATIONS
+                    const firstNameEl = document.getElementById('firstName');
+                    const lastNameEl = document.getElementById('lastName');
+                    const phoneEl = document.getElementById('phone');
+                    const addressEl = document.getElementById('address');
+                    const wilayaEl = document.getElementById('wilaya');
+                    const baladiyaEl = document.getElementById('baladiya');
+                    
+                    console.log('=== FORM ELEMENTS CHECK ===');
+                    console.log('firstNameEl:', firstNameEl, 'Value:', firstNameEl?.value);
+                    console.log('lastNameEl:', lastNameEl, 'Value:', lastNameEl?.value);
+                    console.log('phoneEl:', phoneEl, 'Value:', phoneEl?.value);
+                    
+                    // Get values with validation - using direct property access
+                    let formFirstName = firstNameEl ? (firstNameEl.value || '').toString().trim() : '';
+                    let formLastName = lastNameEl ? (lastNameEl.value || '').toString().trim() : '';
+                    let formPhone = phoneEl ? (phoneEl.value || '').toString().trim() : '';
+                    let formAddress = addressEl ? (addressEl.value || '').toString().trim() : '';
+                    let formWilaya = wilayaEl ? (wilayaEl.value || '').toString().trim() : '';
+                    let formBaladiya = baladiyaEl ? (baladiyaEl.value || '').toString().trim() : '';
+                    
+                    // CRITICAL: If values are empty, try FormData as fallback
+                    if (!formFirstName && !formLastName && !formPhone) {
+                        console.warn('⚠️ Direct element access failed, trying FormData...');
+                        const formDataCheck = new FormData(form);
+                        const fdFirstName = formDataCheck.get('firstName') || formDataCheck.get('first_name') || '';
+                        const fdLastName = formDataCheck.get('lastName') || formDataCheck.get('last_name') || '';
+                        const fdPhone = formDataCheck.get('phone') || '';
+                        
+                        if (fdFirstName || fdLastName || fdPhone) {
+                            console.log('✅ FormData fallback worked:', { fdFirstName, fdLastName, fdPhone });
+                            formFirstName = (fdFirstName || formFirstName).toString().trim();
+                            formLastName = (fdLastName || formLastName).toString().trim();
+                            formPhone = (fdPhone || formPhone).toString().trim();
+                        }
+                    }
+                    
+                    // FINAL FALLBACK: Try to read directly from form.elements
+                    if (!formFirstName && !formLastName) {
+                        console.warn('⚠️ Still empty, trying form.elements...');
+                        if (form.elements.firstName && form.elements.firstName.value) {
+                            formFirstName = form.elements.firstName.value.toString().trim();
+                        }
+                        if (form.elements.lastName && form.elements.lastName.value) {
+                            formLastName = form.elements.lastName.value.toString().trim();
+                        }
+                        if (form.elements.phone && form.elements.phone.value) {
+                            formPhone = form.elements.phone.value.toString().trim();
+                        }
+                    }
+                    
+                    // Build customer name immediately
+                    let customerName = '';
+                    if (formFirstName && formLastName) {
+                        customerName = (formFirstName + ' ' + formLastName).trim();
+                    } else if (formFirstName) {
+                        customerName = formFirstName;
+                    } else if (formLastName) {
+                        customerName = formLastName;
+                    }
+                    if (!customerName) customerName = 'غير محدد';
+                    
+                    // Get frame info
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const frameId = urlParams.get('id') || window.location.pathname.split('/').pop();
+                    const frame = frameData[frameId] || { title: 'إطار فني', price: '0', frame_type: '' };
+                    
+                    console.log('=== CAPTURED FORM DATA ===');
+                    console.log('First Name:', formFirstName, '(type:', typeof formFirstName, ', length:', formFirstName.length, ')');
+                    console.log('Last Name:', formLastName, '(type:', typeof formLastName, ', length:', formLastName.length, ')');
+                    console.log('Phone:', formPhone, '(type:', typeof formPhone, ', length:', formPhone.length, ')');
+                    console.log('Customer Name:', customerName);
+                    console.log('Address:', formAddress);
+                    console.log('Wilaya:', formWilaya);
+                    console.log('Baladya:', formBaladiya);
+                    console.log('Frame:', frame);
+                    
+                    // CRITICAL VALIDATION: If we still don't have values, alert and stop
+                    if (!formFirstName && !formLastName && !formPhone) {
+                        console.error('❌ CRITICAL ERROR: No form values captured!');
+                        console.error('Form elements check:');
+                        console.error('  firstNameEl:', firstNameEl, 'value:', firstNameEl?.value);
+                        console.error('  lastNameEl:', lastNameEl, 'value:', lastNameEl?.value);
+                        console.error('  phoneEl:', phoneEl, 'value:', phoneEl?.value);
+                        
+                        // Try one more time - maybe elements weren't ready
+                        const retryFirstName = document.getElementById('firstName')?.value || '';
+                        const retryLastName = document.getElementById('lastName')?.value || '';
+                        const retryPhone = document.getElementById('phone')?.value || '';
+                        
+                        if (retryFirstName || retryLastName || retryPhone) {
+                            console.log('✅ Retry successful! Using retry values');
+                            formFirstName = retryFirstName.trim();
+                            formLastName = retryLastName.trim();
+                            formPhone = retryPhone.trim();
+                            
+                            // Rebuild customer name
+                            if (formFirstName && formLastName) {
+                                customerName = (formFirstName + ' ' + formLastName).trim();
+                            } else if (formFirstName) {
+                                customerName = formFirstName;
+                            } else if (formLastName) {
+                                customerName = formLastName;
+                            }
+                        } else {
+                            alert('خطأ: لم يتم قراءة بيانات النموذج. يرجى التأكد من ملء جميع الحقول المطلوبة.\n\nتم العثور على: firstName=' + formFirstName + ', lastName=' + formLastName + ', phone=' + formPhone);
+                            if (submitButton) {
+                                submitButton.disabled = false;
+                                submitButton.textContent = 'تأكيد الطلب - الدفع عند الاستلام';
+                            }
+                            return;
+                        }
+                    }
+                    
+                    // Get form data for API
+                    const formData = new FormData();
+                    formData.append('first_name', formFirstName);
+                    formData.append('last_name', formLastName);
+                    formData.append('phone', formPhone);
+                    formData.append('wilaya', formWilaya);
+                    formData.append('baladiya', formBaladiya);
+                    formData.append('address', formAddress);
+                    formData.append('payment_method', 'COD');
+                    formData.append('frame', frameId);
+                    
+                    // Add audio if recorded
+                    if (recordedAudio) {
+                        formData.append('audio_file', recordedAudio, 'recording.webm');
+                    }
+                    
+                    // Submit to API
+                    const response = await fetch('http://localhost:8001/api/orders/', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        const responseData = await response.json();
+                        const order = responseData.order || responseData;
+                        
+                        console.log('=== API RESPONSE ===');
+                        console.log('Response Data:', responseData);
+                        console.log('Order Object:', order);
+                        
+                        // Build thank you data - USE FORM VALUES (most reliable)
+                        const thankYouData = {
+                            orderId: responseData.id || responseData.supabase_id || order.id || 'N/A',
+                            firstName: formFirstName,
+                            lastName: formLastName,
+                            customerName: customerName,  // Already constructed from form values
+                            phone: formPhone || 'غير محدد',
+                            email: responseData.customer_email || order.customer_email || order.email || '',
+                            address: formAddress || '',
+                            city: responseData.city || order.city || '',
+                            wilaya: formWilaya || '',
+                            baladya: formBaladiya || '',
+                            postalCode: responseData.postal_code || order.postal_code || order.postalCode || '',
+                            frameTitle: responseData.frame_title || order.frame_title || frame.title || 'غير محدد',
+                            frameType: responseData.frame_type || order.frame_type || frame.frame_type || '',
+                            framePrice: responseData.frame_price || responseData.total_amount || order.frame_price || order.total_amount || frame.price || '0',
+                            totalAmount: responseData.total_amount || responseData.frame_price || order.total_amount || order.frame_price || frame.price || '0',
+                            paymentMethod: responseData.payment_method || order.payment_method || 'الدفع عند الاستلام',
+                            // Audio status
+                            hasAudio: !!(responseData.audio_file_url || 
+                                        responseData.audio_uploaded || 
+                                        responseData.has_audio ||
+                                        responseData.audio_url ||
+                                        order.audio_file_url || 
+                                        recordedAudio),
+                            audioRecorded: !!(responseData.audio_file_url || 
+                                             responseData.audio_uploaded || 
+                                             responseData.has_audio ||
+                                             responseData.audio_url ||
+                                             order.audio_file_url || 
+                                             recordedAudio),
+                            audioFileUrl: responseData.audio_file_url || responseData.audio_url || order.audio_file_url || '',
+                            audioUploaded: responseData.audio_uploaded || false,
+                            has_audio: responseData.has_audio || false
+                        };
+                        
+                        // FINAL VALIDATION before saving - FORCE USE FORM VALUES ONLY
+                        console.log('=== FINAL VALIDATION BEFORE SAVING ===');
+                        console.log('formFirstName:', formFirstName, '(valid:', !!formFirstName && formFirstName !== 'undefined', ')');
+                        console.log('formLastName:', formLastName, '(valid:', !!formLastName && formLastName !== 'undefined', ')');
+                        console.log('formPhone:', formPhone, '(valid:', !!formPhone && formPhone !== 'undefined', ')');
+                        console.log('customerName (built):', customerName);
+                        
+                        // CRITICAL: ALWAYS overwrite with form values - don't trust API response for these
+                        thankYouData.firstName = formFirstName || '';
+                        thankYouData.lastName = formLastName || '';
+                        
+                        // Rebuild customerName from form values ONLY
+                        if (formFirstName && formLastName) {
+                            thankYouData.customerName = (formFirstName + ' ' + formLastName).trim();
+                        } else if (formFirstName) {
+                            thankYouData.customerName = formFirstName.trim();
+                        } else if (formLastName) {
+                            thankYouData.customerName = formLastName.trim();
+                        } else {
+                            thankYouData.customerName = customerName || 'غير محدد';
+                        }
+                        
+                        // Remove any "undefined" strings
+                        thankYouData.customerName = thankYouData.customerName.toString()
+                            .replace(/undefined/gi, '')
+                            .replace(/\s{2,}/g, ' ')
+                            .trim();
+                        
+                        // Set phone from form value ONLY
+                        thankYouData.phone = formPhone || 'غير محدد';
+                        thankYouData.phone = thankYouData.phone.toString()
+                            .replace(/undefined/gi, '')
+                            .trim();
+                        
+                        // Final safety check - if still contains "undefined", use fallback
+                        if (thankYouData.customerName.includes('undefined') || thankYouData.customerName === '') {
+                            console.error('❌ Customer name still invalid after cleanup, using form values directly');
+                            if (formFirstName || formLastName) {
+                                thankYouData.customerName = [formFirstName, formLastName].filter(Boolean).join(' ').trim() || 'غير محدد';
+                            } else {
+                                thankYouData.customerName = 'غير محدد';
+                            }
+                        }
+                        
+                        console.log('=== SAVING TO SESSION STORAGE ===');
+                        console.log('Complete thankYouData object:', JSON.stringify(thankYouData, null, 2));
+                        console.log('Customer Name (final):', thankYouData.customerName);
+                        console.log('Phone (final):', thankYouData.phone);
+                        console.log('FirstName (final):', thankYouData.firstName);
+                        console.log('LastName (final):', thankYouData.lastName);
+                        console.log('Has Audio:', thankYouData.hasAudio);
+                        
+                        // Save to sessionStorage with error handling
+                        try {
+                            const jsonString = JSON.stringify(thankYouData);
+                            sessionStorage.setItem('orderData', jsonString);
+                            console.log('✅ Data saved to sessionStorage');
+                            
+                            // IMMEDIATE verification
+                            const saved = sessionStorage.getItem('orderData');
+                            if (saved) {
+                                const parsed = JSON.parse(saved);
+                                console.log('✅ VERIFIED IMMEDIATELY AFTER SAVE:');
+                                console.log('  - customerName:', parsed.customerName);
+                                console.log('  - phone:', parsed.phone);
+                                console.log('  - firstName:', parsed.firstName);
+                                console.log('  - lastName:', parsed.lastName);
+                                
+                                // Alert if data looks wrong
+                                if (parsed.customerName.includes('undefined') || !parsed.phone || parsed.phone === '') {
+                                    console.error('❌ WARNING: Data saved but looks incorrect!');
+                                }
+                            } else {
+                                console.error('❌ CRITICAL: Data not found immediately after save!');
+                            }
+                        } catch (saveError) {
+                            console.error('❌ CRITICAL ERROR saving to sessionStorage:', saveError);
+                            alert('حدث خطأ في حفظ البيانات. يرجى المحاولة مرة أخرى.');
+                            submitButton.disabled = false;
+                            submitButton.textContent = 'تأكيد الطلب - الدفع عند الاستلام';
+                            return;
+                        }
+                        
+                        // Small delay to ensure sessionStorage is written, then redirect with data in URL as backup
+                        setTimeout(() => {
+                            // Verify data one more time
+                            const verifyData = sessionStorage.getItem('orderData');
+                            if (verifyData) {
+                                const verifyParsed = JSON.parse(verifyData);
+                                console.log('✅ FINAL VERIFICATION - Data ready:', {
+                                    customerName: verifyParsed.customerName,
+                                    phone: verifyParsed.phone,
+                                    firstName: verifyParsed.firstName,
+                                    lastName: verifyParsed.lastName
+                                });
+                                
+                                // Redirect with data in URL as backup (if data looks invalid)
+                                const urlParams = new URLSearchParams();
+                                urlParams.set('id', thankYouData.orderId);
+                                if (formFirstName) urlParams.set('fn', formFirstName);
+                                if (formLastName) urlParams.set('ln', formLastName);
+                                if (formPhone) urlParams.set('ph', formPhone);
+                                
+                                window.location.href = '/thank-you?' + urlParams.toString();
+                            } else {
+                                console.error('❌ CRITICAL: Data lost before redirect!');
+                                alert('حدث خطأ في حفظ البيانات. سيتم حفظها في رابط الصفحة.');
+                                const urlParams = new URLSearchParams();
+                                urlParams.set('id', thankYouData.orderId);
+                                if (formFirstName) urlParams.set('fn', formFirstName);
+                                if (formLastName) urlParams.set('ln', formLastName);
+                                if (formPhone) urlParams.set('ph', formPhone);
+                                window.location.href = '/thank-you?' + urlParams.toString();
+                            }
+                        }, 200);
+                    } else {
+                        // API failed - but we still have form values, so save them
+                        console.error('API request failed, but saving form data anyway');
+                        
+                        // Use the form values we already captured
+                        const fallbackData = {
+                            orderId: 'ORD-' + Date.now(),
+                            firstName: formFirstName,
+                            lastName: formLastName,
+                            customerName: customerName,  // Already constructed above
+                            phone: formPhone || 'غير محدد',
+                            address: formAddress || '',
+                            wilaya: formWilaya || '',
+                            baladya: formBaladiya || '',
+                            frameTitle: frame.title || 'غير محدد',
+                            frameType: frame.frame_type || '',
+                            framePrice: frame.price || '0',
+                            totalAmount: frame.price || '0',
+                            paymentMethod: 'الدفع عند الاستلام',
+                            hasAudio: !!recordedAudio,
+                            audioRecorded: !!recordedAudio,
+                            audioUploaded: false,
+                            has_audio: !!recordedAudio
+                        };
+                        
+                        console.log('Saving fallback order data (API failed):', fallbackData);
+                        sessionStorage.setItem('orderData', JSON.stringify(fallbackData));
+                        window.location.href = '/thank-you';
+                    }
+                    
+                } catch (error) {
+                    console.error('Error submitting order:', error);
+                    
+                    // CRITICAL: Even on error, save the form data we captured
+                    console.log('ERROR occurred, but saving captured form data...');
+                    
+                    const errorFallbackData = {
+                        orderId: 'ORD-ERROR-' + Date.now(),
+                        firstName: formFirstName,
+                        lastName: formLastName,
+                        customerName: customerName,  // Already constructed from form values
+                        phone: formPhone || 'غير محدد',
+                        address: formAddress || '',
+                        wilaya: formWilaya || '',
+                        baladya: formBaladiya || '',
+                        frameTitle: frame.title || 'غير محدد',
+                        frameType: frame.frame_type || '',
+                        framePrice: frame.price || '0',
+                        totalAmount: frame.price || '0',
+                        paymentMethod: 'الدفع عند الاستلام',
+                        hasAudio: !!recordedAudio,
+                        audioRecorded: !!recordedAudio
+                    };
+                    
+                    console.log('Saving error fallback data:', errorFallbackData);
+                    sessionStorage.setItem('orderData', JSON.stringify(errorFallbackData));
+                    
+                    // Still redirect to thank you page even on error
+                    alert('حدث خطأ في إرسال الطلب، ولكن تم حفظ بياناتك. سيتم التواصل معك قريباً.');
+                    window.location.href = '/thank-you';
+                }
+            });
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFrameDetails();
+            setupAudioRecording();
+            setupOrderForm();
+        });
+    </script>
+</body>
+</html>

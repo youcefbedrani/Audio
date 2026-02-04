@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل الإطار - إطارات الصوت الفنية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+        .recording { animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-2xl font-bold text-blue-600">🎨 إطارات الصوت الفنية</a>
+                </div>
+                <div class="flex space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-blue-600 transition-colors">الرئيسية</a>
+                    <a href="frames.html" class="text-gray-700 hover:text-blue-600 transition-colors">الإطارات</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Loading State -->
+        <div id="loading" class="text-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p class="text-gray-600">جاري تحميل تفاصيل الإطار...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="hidden text-center py-12">
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <p class="font-bold">خطأ في تحميل تفاصيل الإطار</p>
+                <p class="text-sm" id="error-message"></p>
+            </div>
+            <button onclick="window.location.reload()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mr-4">
+                إعادة المحاولة
+            </button>
+            <a href="frames.html" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+                العودة للإطارات
+            </a>
+        </div>
+
+        <!-- Frame Details -->
+        <div id="frame-details" class="hidden">
+            <!-- Frame Information -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                <!-- Frame Image -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="aspect-square bg-gray-200 flex items-center justify-center">
+                        <div id="frame-image" class="text-center text-gray-500">
+                            <div class="text-6xl mb-4">🖼️</div>
+                            <p>صورة الإطار</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Frame Details -->
+                <div class="bg-white rounded-lg shadow-md p-8">
+                    <h1 id="frame-title" class="text-3xl font-bold text-gray-900 mb-4"></h1>
+                    <p id="frame-description" class="text-gray-600 text-lg mb-6"></p>
+
+                    <div class="space-y-4 mb-6">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700 font-medium">النوع:</span>
+                            <span id="frame-type" class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm"></span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700 font-medium">الحالة:</span>
+                            <span id="frame-status" class="px-3 py-1 rounded-full text-sm"></span>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="text-2xl font-bold text-gray-900">السعر:</span>
+                            <span id="frame-price" class="text-4xl font-bold text-blue-600"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Form -->
+            <div class="bg-white rounded-lg shadow-md p-8 mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">طلب الإطار - الدفع عند الاستلام</h2>
+                
+                <form id="orderForm" class="space-y-6">
+                    <!-- Customer Information -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-gray-900">معلومات العميل</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="firstName" class="block text-sm font-medium text-gray-700 mb-2">الاسم الأول *</label>
+                                <input type="text" id="firstName" name="firstName" required 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label for="lastName" class="block text-sm font-medium text-gray-700 mb-2">اسم العائلة *</label>
+                                <input type="text" id="lastName" name="lastName" required 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">رقم الهاتف *</label>
+                            <input type="tel" id="phone" name="phone" required 
+                                   placeholder="05xxxxxxxx"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="wilaya" class="block text-sm font-medium text-gray-700 mb-2">الولاية *</label>
+                                <select id="wilaya" name="wilaya" required 
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">اختر الولاية</option>
+                                    <option value="الجزائر">الجزائر</option>
+                                    <option value="وهران">وهران</option>
+                                    <option value="قسنطينة">قسنطينة</option>
+                                    <option value="البليدة">البليدة</option>
+                                    <option value="سطيف">سطيف</option>
+                                    <option value="عنابة">عنابة</option>
+                                    <option value="تيزي وزو">تيزي وزو</option>
+                                    <option value="بجاية">بجاية</option>
+                                    <option value="باتنة">باتنة</option>
+                                    <option value="بشار">بشار</option>
+                                    <option value="تبسة">تبسة</option>
+                                    <option value="تلمسان">تلمسان</option>
+                                    <option value="الجلفة">الجلفة</option>
+                                    <option value="جيجل">جيجل</option>
+                                    <option value="سطيف">سطيف</option>
+                                    <option value="سعيدة">سعيدة</option>
+                                    <option value="سكيكدة">سكيكدة</option>
+                                    <option value="سيدي بلعباس">سيدي بلعباس</option>
+                                    <option value="عنابة">عنابة</option>
+                                    <option value="قالمة">قالمة</option>
+                                    <option value="قسنطينة">قسنطينة</option>
+                                    <option value="المدية">المدية</option>
+                                    <option value="مستغانم">مستغانم</option>
+                                    <option value="المسيلة">المسيلة</option>
+                                    <option value="معسكر">معسكر</option>
+                                    <option value="ورقلة">ورقلة</option>
+                                    <option value="وهران">وهران</option>
+                                    <option value="البيض">البيض</option>
+                                    <option value="إليزي">إليزي</option>
+                                    <option value="برج بوعريريج">برج بوعريريج</option>
+                                    <option value="بومرداس">بومرداس</option>
+                                    <option value="الطارف">الطارف</option>
+                                    <option value="تندوف">تندوف</option>
+                                    <option value="تيسمسيلت">تيسمسيلت</option>
+                                    <option value="الوادي">الوادي</option>
+                                    <option value="خنشلة">خنشلة</option>
+                                    <option value="سوق أهراس">سوق أهراس</option>
+                                    <option value="تيبازة">تيبازة</option>
+                                    <option value="ميلة">ميلة</option>
+                                    <option value="عين الدفلى">عين الدفلى</option>
+                                    <option value="النعامة">النعامة</option>
+                                    <option value="عين تيموشنت">عين تيموشنت</option>
+                                    <option value="غرداية">غرداية</option>
+                                    <option value="غليزان">غليزان</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="baladiya" class="block text-sm font-medium text-gray-700 mb-2">البلدية *</label>
+                                <input type="text" id="baladiya" name="baladiya" required 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="address" class="block text-sm font-medium text-gray-700 mb-2">العنوان التفصيلي *</label>
+                            <textarea id="address" name="address" required rows="3"
+                                      placeholder="شارع، رقم المنزل، الحي، أي معلومات إضافية للوصول"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Audio Recording -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-gray-900">تسجيل رسالة صوتية</h3>
+                        <p class="text-gray-600">يمكنك تسجيل رسالة صوتية شخصية لتربطها بالإطار</p>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div id="audio-controls" class="text-center space-y-4">
+                                <button type="button" id="startRecording" 
+                                        class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
+                                    🎤 بدء التسجيل
+                                </button>
+                                <button type="button" id="stopRecording" disabled
+                                        class="bg-gray-400 text-white px-6 py-3 rounded-lg cursor-not-allowed">
+                                    ⏹️ إيقاف التسجيل
+                                </button>
+                                <button type="button" id="playRecording" disabled
+                                        class="bg-blue-600 text-white px-6 py-3 rounded-lg cursor-not-allowed">
+                                    ▶️ تشغيل التسجيل
+                                </button>
+                            </div>
+                            
+                            <div id="recording-status" class="text-center mt-4 hidden">
+                                <div class="recording text-red-600 font-semibold">
+                                    🔴 جاري التسجيل...
+                                </div>
+                            </div>
+                            
+                            <div id="audio-player" class="mt-4 hidden">
+                                <audio controls class="w-full">
+                                    <source id="audio-source" type="audio/webm">
+                                    متصفحك لا يدعم تشغيل الصوت.
+                                </audio>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Terms and Conditions -->
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <input type="checkbox" id="terms" name="terms" required 
+                                   class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="terms" class="mr-2 text-sm text-gray-700">
+                                أوافق على <a href="#" class="text-blue-600 hover:text-blue-800">الشروط والأحكام</a> 
+                                و <a href="#" class="text-blue-600 hover:text-blue-800">سياسة الخصوصية</a> *
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                        <button type="submit" id="submitOrder"
+                                class="bg-green-600 text-white px-8 py-4 rounded-lg hover:bg-green-700 transition-colors text-lg font-semibold">
+                            تأكيد الطلب - الدفع عند الاستلام
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let frame = null;
+        let mediaRecorder;
+        let audioChunks = [];
+        let recordedAudio = null;
+
+        // Load frame details
+        async function loadFrameDetails() {
+            try {
+                const pathParts = window.location.pathname.split('/');
+                const frameId = pathParts[pathParts.length - 1];
+                
+                console.log('Loading frame details for ID:', frameId);
+                
+                const response = await fetch(`http://localhost:8000/api/frames/${frameId}/`);
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                frame = await response.json();
+                console.log('Frame data:', frame);
+                
+                displayFrameDetails();
+                setupAudioRecording();
+                setupOrderForm();
+            } catch (err) {
+                console.error('Error:', err);
+                showError(err.message);
+            }
+        }
+
+        // Display frame details
+        function displayFrameDetails() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const frameDetails = document.getElementById('frame-details');
+
+            loading.classList.add('hidden');
+            error.classList.add('hidden');
+            frameDetails.classList.remove('hidden');
+
+            // Update frame information
+            document.getElementById('frame-title').textContent = frame.title;
+            document.getElementById('frame-description').textContent = frame.description;
+            document.getElementById('frame-type').textContent = frame.frame_type;
+            document.getElementById('frame-price').textContent = `${frame.price} دج`;
+
+            // Update status
+            const statusElement = document.getElementById('frame-status');
+            if (frame.is_available) {
+                statusElement.textContent = 'متاح';
+                statusElement.className = 'px-3 py-1 rounded-full text-sm bg-green-100 text-green-800';
+            } else {
+                statusElement.textContent = 'غير متاح';
+                statusElement.className = 'px-3 py-1 rounded-full text-sm bg-red-100 text-red-800';
+            }
+
+            // Update image if available
+            if (frame.image) {
+                document.getElementById('frame-image').innerHTML = `
+                    <img src="${frame.image}" alt="${frame.title}" class="w-full h-full object-cover">
+                `;
+            }
+        }
+
+        // Setup audio recording
+        function setupAudioRecording() {
+            document.getElementById('startRecording').addEventListener('click', async () => {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        recordedAudio = audioBlob;
+                        
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        document.getElementById('audio-source').src = audioUrl;
+                        document.getElementById('audio-player').classList.remove('hidden');
+                        document.getElementById('playRecording').disabled = false;
+                        
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+                    
+                    document.getElementById('startRecording').disabled = true;
+                    document.getElementById('stopRecording').disabled = false;
+                    document.getElementById('recording-status').classList.remove('hidden');
+                    
+                } catch (error) {
+                    alert('خطأ في الوصول للميكروفون: ' + error.message);
+                }
+            });
+
+            document.getElementById('stopRecording').addEventListener('click', () => {
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                    
+                    document.getElementById('startRecording').disabled = false;
+                    document.getElementById('stopRecording').disabled = true;
+                    document.getElementById('recording-status').classList.add('hidden');
+                }
+            });
+
+            document.getElementById('playRecording').addEventListener('click', () => {
+                const audio = document.getElementById('audio-source');
+                if (audio.src) {
+                    audio.play();
+                }
+            });
+        }
+
+        // Setup order form
+        function setupOrderForm() {
+            document.getElementById('orderForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const submitButton = document.getElementById('submitOrder');
+                submitButton.disabled = true;
+                submitButton.textContent = 'جاري إرسال الطلب...';
+                
+                try {
+                    const formData = new FormData();
+                    formData.append('firstName', document.getElementById('firstName').value);
+                    formData.append('lastName', document.getElementById('lastName').value);
+                    formData.append('phone', document.getElementById('phone').value);
+                    formData.append('wilaya', document.getElementById('wilaya').value);
+                    formData.append('baladiya', document.getElementById('baladiya').value);
+                    formData.append('address', document.getElementById('address').value);
+                    formData.append('payment_method', 'COD');
+                    formData.append('frameId', frame.id);
+                    formData.append('frameTitle', frame.title);
+                    formData.append('framePrice', frame.price);
+                    
+                    if (recordedAudio) {
+                        formData.append('audio', recordedAudio, 'recording.webm');
+                    }
+                    
+                    console.log('Submitting order...');
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    const orderData = {
+                        orderId: 'ORD-' + Date.now(),
+                        customerName: document.getElementById('firstName').value + ' ' + document.getElementById('lastName').value,
+                        phone: document.getElementById('phone').value,
+                        frameTitle: frame.title,
+                        framePrice: frame.price,
+                        hasAudio: recordedAudio ? true : false
+                    };
+                    
+                    sessionStorage.setItem('orderData', JSON.stringify(orderData));
+                    window.location.href = 'thank-you.html';
+                    
+                } catch (error) {
+                    console.error('Error submitting order:', error);
+                    alert('خطأ في إرسال الطلب. يرجى المحاولة مرة أخرى.');
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'تأكيد الطلب - الدفع عند الاستلام';
+                }
+            });
+        }
+
+        // Show error
+        function showError(message) {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const frameDetails = document.getElementById('frame-details');
+
+            loading.classList.add('hidden');
+            frameDetails.classList.add('hidden');
+            error.classList.remove('hidden');
+            document.getElementById('error-message').textContent = message;
+        }
+
+        // Load frame details when page loads
+        document.addEventListener('DOMContentLoaded', loadFrameDetails);
+    </script>
+</body>
+</html>

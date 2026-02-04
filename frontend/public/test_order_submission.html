@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Order Submission</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Test Order Submission</h1>
+        
+        <div class="bg-white p-6 rounded-lg shadow">
+            <button id="testOrder" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                Test Order Submission
+            </button>
+            
+            <div id="result" class="mt-4 p-4 bg-gray-100 rounded-lg hidden">
+                <h3 class="font-semibold mb-2">Result:</h3>
+                <pre id="resultText" class="text-sm"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('testOrder').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('result');
+            const resultText = document.getElementById('resultText');
+            
+            try {
+                const orderData = {
+                    customer_name: "Test User",
+                    customer_phone: "0555123456",
+                    delivery_address: "Test Address",
+                    city: "الجزائر",
+                    frame_id: 1,
+                    total_amount: 150.0
+                };
+                
+                const response = await fetch('http://localhost:8001/api/orders/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                resultText.textContent = JSON.stringify(result, null, 2);
+                resultDiv.classList.remove('hidden');
+                resultDiv.classList.add('bg-green-100');
+                
+            } catch (error) {
+                resultText.textContent = `Error: ${error.message}`;
+                resultDiv.classList.remove('hidden');
+                resultDiv.classList.add('bg-red-100');
+            }
+        });
+    </script>
+</body>
+</html>

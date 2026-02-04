@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إطارات الصوت الفنية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-6">
+                    <h1 class="text-2xl font-bold text-gray-900">إطارات الصوت الفنية</h1>
+                    <a href="/" class="text-blue-600 hover:text-blue-800">العودة للرئيسية</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">مجموعتنا من الإطارات الفنية</h2>
+                <p class="text-gray-600">جاري تحميل الإطارات...</p>
+            </div>
+
+            <!-- Loading -->
+            <div id="loading" class="text-center py-12">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p class="text-gray-600">جاري تحميل الإطارات...</p>
+            </div>
+
+            <!-- Error -->
+            <div id="error" class="hidden text-center py-12">
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <p class="font-bold">خطأ في تحميل الإطارات</p>
+                    <p id="error-message" class="text-sm"></p>
+                </div>
+                <button onclick="loadFrames()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                    إعادة المحاولة
+                </button>
+            </div>
+
+            <!-- Frames Grid -->
+            <div id="frames-grid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Frames will be loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function loadFrames() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const framesGrid = document.getElementById('frames-grid');
+            const errorMessage = document.getElementById('error-message');
+
+            // Show loading
+            loading.classList.remove('hidden');
+            error.classList.add('hidden');
+            framesGrid.classList.add('hidden');
+
+            try {
+                console.log('Fetching frames from API...');
+                const response = await fetch('http://localhost:8000/api/frames/');
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Frames data:', data);
+                
+                // Hide loading
+                loading.classList.add('hidden');
+                
+                if (data.results && data.results.length > 0) {
+                    displayFrames(data.results);
+                } else {
+                    throw new Error('No frames found');
+                }
+                
+            } catch (err) {
+                console.error('Error fetching frames:', err);
+                loading.classList.add('hidden');
+                error.classList.remove('hidden');
+                errorMessage.textContent = err.message;
+            }
+        }
+
+        function displayFrames(frames) {
+            const framesGrid = document.getElementById('frames-grid');
+            framesGrid.innerHTML = '';
+
+            frames.forEach(frame => {
+                const frameCard = document.createElement('div');
+                frameCard.className = 'bg-white rounded-lg shadow-md overflow-hidden';
+                frameCard.innerHTML = `
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">${frame.title}</h3>
+                        <p class="text-gray-600 mb-4">${frame.description}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-bold text-blue-600">${frame.price} دج</span>
+                            <span class="px-3 py-1 rounded-full text-sm ${frame.is_available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${frame.is_available ? 'متاح' : 'غير متاح'}
+                            </span>
+                        </div>
+                        <div class="mt-4">
+                            <span class="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">${frame.frame_type}</span>
+                        </div>
+                        <div class="mt-4">
+                            <button onclick="viewFrame(${frame.id})" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                                عرض التفاصيل
+                            </button>
+                        </div>
+                    </div>
+                `;
+                framesGrid.appendChild(frameCard);
+            });
+
+            framesGrid.classList.remove('hidden');
+        }
+
+        function viewFrame(frameId) {
+            alert(`عرض تفاصيل الإطار رقم ${frameId}`);
+        }
+
+        // Load frames when page loads
+        document.addEventListener('DOMContentLoaded', loadFrames);
+    </script>
+</body>
+</html>

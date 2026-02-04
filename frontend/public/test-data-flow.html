@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Data Flow</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { margin-bottom: 20px; color: #333; }
+        .test-btn { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .test-btn:hover { background: #0056b3; }
+        .result { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px; border-left: 4px solid #007bff; }
+        pre { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+        .success { border-left-color: #28a745; background: #d4edda; }
+        .error { border-left-color: #dc3545; background: #f8d7da; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Data Flow Test</h1>
+        
+        <button class="test-btn" onclick="testSaveData()">1. Save Test Data</button>
+        <button class="test-btn" onclick="testReadData()">2. Read Data</button>
+        <button class="test-btn" onclick="clearData()">3. Clear All</button>
+        <button class="test-btn" onclick="goToThankYou()">4. Go to Thank You Page</button>
+        
+        <div id="result"></div>
+    </div>
+    
+    <script>
+        function showResult(msg, isSuccess = true) {
+            const result = document.getElementById('result');
+            result.className = 'result ' + (isSuccess ? 'success' : 'error');
+            result.innerHTML = '<pre>' + msg + '</pre>';
+        }
+        
+        function testSaveData() {
+            const testData = {
+                orderId: 'TEST-' + Date.now(),
+                firstName: 'محمد',
+                lastName: 'أحمد',
+                customerName: 'محمد أحمد',
+                phone: '0555123456',
+                address: 'شارع الرئيسي',
+                wilaya: 'الجزائر',
+                baladya: 'الجزائر الوسطى',
+                frameTitle: 'إطار خشبي كلاسيكي',
+                framePrice: '150.0',
+                totalAmount: '150.0',
+                paymentMethod: 'الدفع عند الاستلام',
+                hasAudio: true,
+                audioRecorded: true
+            };
+            
+            try {
+                sessionStorage.setItem('orderData', JSON.stringify(testData));
+                const saved = sessionStorage.getItem('orderData');
+                const parsed = JSON.parse(saved);
+                
+                if (parsed.customerName === testData.customerName && parsed.phone === testData.phone) {
+                    showResult('✅ Data saved successfully!\n\n' + JSON.stringify(parsed, null, 2), true);
+                } else {
+                    showResult('❌ Data saved but values don\'t match!\n\nExpected:\n' + JSON.stringify(testData, null, 2) + '\n\nSaved:\n' + JSON.stringify(parsed, null, 2), false);
+                }
+            } catch (error) {
+                showResult('❌ Error saving data: ' + error.message, false);
+            }
+        }
+        
+        function testReadData() {
+            try {
+                const data = sessionStorage.getItem('orderData');
+                if (!data) {
+                    showResult('❌ No data found in sessionStorage!', false);
+                    return;
+                }
+                
+                const parsed = JSON.parse(data);
+                showResult('✅ Data found:\n\n' + JSON.stringify(parsed, null, 2), true);
+                
+                // Check critical fields
+                const issues = [];
+                if (!parsed.customerName || parsed.customerName.includes('undefined')) {
+                    issues.push('❌ customerName is invalid: ' + parsed.customerName);
+                }
+                if (!parsed.phone || parsed.phone === '' || parsed.phone.includes('undefined')) {
+                    issues.push('❌ phone is invalid: ' + parsed.phone);
+                }
+                
+                if (issues.length > 0) {
+                    showResult('⚠️ Data found but has issues:\n\n' + issues.join('\n') + '\n\nFull data:\n' + JSON.stringify(parsed, null, 2), false);
+                }
+            } catch (error) {
+                showResult('❌ Error reading data: ' + error.message, false);
+            }
+        }
+        
+        function clearData() {
+            sessionStorage.clear();
+            showResult('✅ sessionStorage cleared!', true);
+        }
+        
+        function goToThankYou() {
+            window.location.href = '/thank-you';
+        }
+        
+        // Auto-run test on load
+        window.addEventListener('load', () => {
+            console.log('=== TEST PAGE LOADED ===');
+            testReadData();
+        });
+    </script>
+</body>
+</html>
+

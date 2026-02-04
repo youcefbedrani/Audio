@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شكراً لك - إطارات الصوت الفنية</title>
+    <meta name="description" content="تم استلام طلبك بنجاح">
+    <!-- Tailwind CSS - using Play CDN for static HTML (acceptable for development) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div class="flex items-center">
+                    <a href="/" class="text-2xl font-bold text-blue-600">🎨 إطارات الصوت الفنية</a>
+                </div>
+                <nav class="hidden md:flex space-x-reverse space-x-8">
+                    <a href="/" class="text-gray-700 hover:text-blue-600">الرئيسية</a>
+                    <a href="/frames" class="text-gray-700 hover:text-blue-600">الإطارات</a>
+                </nav>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Loading State -->
+    <div id="loading" class="min-h-screen flex items-center justify-center">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p class="text-gray-600">جاري تحميل بيانات الطلب...</p>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="hidden min-h-screen flex items-center justify-center">
+        <div class="text-center max-w-2xl mx-auto px-4">
+            <div class="text-6xl mb-4">❌</div>
+            <h1 class="text-2xl font-bold text-gray-900 mb-4">لا توجد بيانات طلب</h1>
+            <a href="/frames" class="text-blue-600 hover:text-blue-800">العودة للإطارات</a>
+        </div>
+    </div>
+
+    <!-- Success State -->
+    <main id="success" class="hidden max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Success Message -->
+        <div class="text-center mb-12">
+            <div class="text-6xl mb-6">🎉</div>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">شكراً لك على طلبك!</h1>
+            <p class="text-xl text-gray-600 mb-2">تم استلام طلبك بنجاح وسنتواصل معك قريباً</p>
+            <p id="order-confirmation" class="text-sm text-green-600 font-semibold"></p>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">📋 ملخص الطلب</h2>
+            
+            <div class="space-y-4">
+                <!-- Order ID -->
+                <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                    <span class="text-gray-600 font-medium">رقم الطلب:</span>
+                    <span id="order-id" class="font-bold text-blue-600 text-lg">#N/A</span>
+                </div>
+                
+                <!-- Customer Information Section -->
+                <div class="mt-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">👤 معلومات العميل</h3>
+                    <div class="space-y-3 pl-4 border-r-4 border-blue-200">
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-gray-600">الاسم الكامل:</span>
+                            <span id="customer-name" class="font-semibold text-gray-900">غير محدد</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-gray-600">رقم الهاتف:</span>
+                            <span id="customer-phone" class="font-semibold text-gray-900">غير محدد</span>
+                        </div>
+                        
+                        <div id="customer-email-section" class="hidden flex justify-between items-center py-2">
+                            <span class="text-gray-600">البريد الإلكتروني:</span>
+                            <span id="customer-email" class="font-semibold text-gray-900"></span>
+                        </div>
+                        
+                        <div id="customer-address-section" class="hidden flex justify-between items-start py-2">
+                            <span class="text-gray-600">العنوان:</span>
+                            <span id="customer-address" class="font-semibold text-gray-900 text-left max-w-xs"></span>
+                        </div>
+                        
+                        <div id="customer-location-section" class="hidden flex justify-between items-center py-2">
+                            <span class="text-gray-600">الموقع:</span>
+                            <span id="customer-location" class="font-semibold text-gray-900"></span>
+                        </div>
+                        
+                        <div id="customer-postal-section" class="hidden flex justify-between items-center py-2">
+                            <span class="text-gray-600">الرمز البريدي:</span>
+                            <span id="customer-postal" class="font-semibold text-gray-900"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Frame Information Section -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">🖼️ معلومات الإطار</h3>
+                    <div class="space-y-3 pl-4 border-r-4 border-purple-200">
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-gray-600">نوع الإطار:</span>
+                            <span id="frame-title" class="font-semibold text-gray-900">غير محدد</span>
+                        </div>
+                        
+                        <div id="frame-type-section" class="hidden flex justify-between items-center py-2">
+                            <span class="text-gray-600">المادة:</span>
+                            <span id="frame-type" class="font-semibold text-gray-900"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pricing Section -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">💰 المبلغ</h3>
+                    <div class="space-y-3 pl-4 border-r-4 border-green-200">
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-gray-600">سعر الإطار:</span>
+                            <span id="frame-price" class="font-semibold text-gray-900">0 دج</span>
+                        </div>
+                        
+                        <div id="total-amount-section" class="hidden flex justify-between items-center py-2">
+                            <span class="text-gray-600">المبلغ الإجمالي:</span>
+                            <span id="total-amount" class="font-bold text-green-600 text-lg"></span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center py-2 border-t border-gray-200 mt-3 pt-3">
+                            <span class="text-gray-600">طريقة الدفع:</span>
+                            <span id="payment-method" class="font-semibold text-gray-900">الدفع عند الاستلام</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Audio Recording Section -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">🎤 التسجيل الصوتي</h3>
+                    <div class="pl-4 border-r-4 border-yellow-200">
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-gray-600">الحالة:</span>
+                            <span id="audio-status" class="px-3 py-1 rounded-full text-sm font-semibold"></span>
+                        </div>
+                        
+                        <div id="audio-url-section" class="hidden mt-3">
+                            <a id="audio-url-link" href="#" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
+                                الاستماع إلى التسجيل الصوتي
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="text-center">
+            <a href="/frames" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                العودة للإطارات
+            </a>
+        </div>
+    </main>
+
+    <script>
+        console.log('=== THANK YOU PAGE - LOADING ===');
+        console.log('Current URL:', window.location.href);
+        
+        // Function to normalize data
+        function normalizeOrderData(data) {
+            // Clean up "undefined" strings
+            const clean = (str) => {
+                if (!str || str === 'undefined' || str === 'null') return '';
+                return String(str).trim().replace(/undefined/gi, '').replace(/\s{2,}/g, ' ').trim();
+            };
+            
+            // Build customer name
+            let customerName = clean(data.customerName || '');
+            if (!customerName || customerName === '') {
+                const firstName = clean(data.firstName || '');
+                const lastName = clean(data.lastName || '');
+                if (firstName && lastName) {
+                    customerName = `${firstName} ${lastName}`;
+                } else {
+                    customerName = firstName || lastName || 'غير محدد';
+                }
+            }
+            
+            return {
+                orderId: data.orderId || data.id || 'N/A',
+                customerName: customerName,
+                firstName: clean(data.firstName || ''),
+                lastName: clean(data.lastName || ''),
+                phone: clean(data.phone || data.customer_phone || '') || 'غير محدد',
+                email: clean(data.email || data.customer_email || ''),
+                address: clean(data.address || data.delivery_address || ''),
+                city: clean(data.city || ''),
+                wilaya: clean(data.wilaya || ''),
+                baladya: clean(data.baladya || data.baladiya || ''),
+                postalCode: clean(data.postalCode || data.postal_code || ''),
+                frameTitle: clean(data.frameTitle || data.frame_title || '') || 'غير محدد',
+                frameType: clean(data.frameType || data.frame_type || ''),
+                framePrice: String(data.framePrice || data.frame_price || data.totalAmount || data.total_amount || '0'),
+                totalAmount: String(data.totalAmount || data.total_amount || data.framePrice || data.frame_price || '0'),
+                paymentMethod: data.paymentMethod || data.payment_method || 'الدفع عند الاستلام',
+                hasAudio: !!(data.hasAudio || data.audioRecorded || data.audio_file_url || data.audioFileUrl),
+                audioFileUrl: data.audioFileUrl || data.audio_file_url || ''
+            };
+        }
+        
+        // Function to load order data
+        function loadOrderData() {
+            let orderData = null;
+            
+            // Try sessionStorage first
+            try {
+                const stored = sessionStorage.getItem('orderData');
+                if (stored) {
+                    console.log('✅ Found data in sessionStorage');
+                    orderData = JSON.parse(stored);
+                }
+            } catch (e) {
+                console.error('Error reading sessionStorage:', e);
+            }
+            
+            // If no sessionStorage, try URL parameters
+            if (!orderData) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const id = urlParams.get('id');
+                const fn = urlParams.get('fn');
+                const ln = urlParams.get('ln');
+                const ph = urlParams.get('ph');
+                
+                if (id || fn || ln || ph) {
+                    console.log('✅ Found data in URL parameters');
+                    orderData = {
+                        orderId: id || 'N/A',
+                        firstName: fn || '',
+                        lastName: ln || '',
+                        phone: ph || '',
+                        customerName: fn && ln ? `${fn} ${ln}` : (fn || ln || ''),
+                    };
+                }
+            }
+            
+            return orderData;
+        }
+        
+        // Function to display order data
+        function displayOrderData(data) {
+            const normalized = normalizeOrderData(data);
+            
+            console.log('Displaying order data:', normalized);
+            
+            // Hide loading, show success
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.add('hidden');
+            document.getElementById('success').classList.remove('hidden');
+            
+            // Order ID
+            document.getElementById('order-id').textContent = `#${normalized.orderId}`;
+            if (normalized.orderId !== 'N/A') {
+                document.getElementById('order-confirmation').textContent = 
+                    `✅ تم حفظ الطلب في قاعدة البيانات برقم: #${normalized.orderId}`;
+            }
+            
+            // Customer info
+            document.getElementById('customer-name').textContent = normalized.customerName;
+            document.getElementById('customer-phone').textContent = normalized.phone;
+            
+            if (normalized.email) {
+                document.getElementById('customer-email').textContent = normalized.email;
+                document.getElementById('customer-email-section').classList.remove('hidden');
+            }
+            
+            if (normalized.address) {
+                document.getElementById('customer-address').textContent = normalized.address;
+                document.getElementById('customer-address-section').classList.remove('hidden');
+            }
+            
+            const location = [normalized.baladya, normalized.wilaya, normalized.city].filter(Boolean).join('، ');
+            if (location) {
+                document.getElementById('customer-location').textContent = location;
+                document.getElementById('customer-location-section').classList.remove('hidden');
+            }
+            
+            if (normalized.postalCode) {
+                document.getElementById('customer-postal').textContent = normalized.postalCode;
+                document.getElementById('customer-postal-section').classList.remove('hidden');
+            }
+            
+            // Frame info
+            document.getElementById('frame-title').textContent = normalized.frameTitle;
+            if (normalized.frameType) {
+                document.getElementById('frame-type').textContent = normalized.frameType;
+                document.getElementById('frame-type-section').classList.remove('hidden');
+            }
+            
+            // Pricing
+            document.getElementById('frame-price').textContent = `${normalized.framePrice} دج`;
+            if (normalized.totalAmount && normalized.totalAmount !== normalized.framePrice) {
+                document.getElementById('total-amount').textContent = `${normalized.totalAmount} دج`;
+                document.getElementById('total-amount-section').classList.remove('hidden');
+            }
+            document.getElementById('payment-method').textContent = normalized.paymentMethod;
+            
+            // Audio
+            const audioStatus = document.getElementById('audio-status');
+            if (normalized.hasAudio) {
+                audioStatus.textContent = '✅ تم التسجيل';
+                audioStatus.className = 'px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800';
+                
+                if (normalized.audioFileUrl) {
+                    document.getElementById('audio-url-link').href = normalized.audioFileUrl;
+                    document.getElementById('audio-url-section').classList.remove('hidden');
+                }
+            } else {
+                audioStatus.textContent = '❌ لم يتم التسجيل';
+                audioStatus.className = 'px-3 py-1 rounded-full text-sm font-semibold bg-red-100 text-red-800';
+            }
+        }
+        
+        // Load and display data when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Try immediate load
+            const orderData = loadOrderData();
+            
+            if (orderData) {
+                displayOrderData(orderData);
+            } else {
+                // Wait a bit and retry (in case page loaded too fast)
+                setTimeout(() => {
+                    const retryData = loadOrderData();
+                    if (retryData) {
+                        displayOrderData(retryData);
+                    } else {
+                        // Show error
+                        document.getElementById('loading').classList.add('hidden');
+                        document.getElementById('error').classList.remove('hidden');
+                        document.getElementById('success').classList.add('hidden');
+                    }
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>
+

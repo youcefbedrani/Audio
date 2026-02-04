@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الإطارات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen p-8">
+        <h1 class="text-3xl font-bold text-center mb-8">اختبار الإطارات</h1>
+        
+        <div id="status" class="text-center mb-8">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p>جاري اختبار الاتصال...</p>
+        </div>
+
+        <div id="results" class="hidden">
+            <!-- Results will be shown here -->
+        </div>
+    </div>
+
+    <script>
+        async function testConnection() {
+            const status = document.getElementById('status');
+            const results = document.getElementById('results');
+            
+            try {
+                console.log('Testing Supabase direct connection...');
+                const supabaseResponse = await fetch('https://qksmfogjdurxgzmlcujb.supabase.co/rest/v1/api_frame?select=*', {
+                    headers: {
+                        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrc21mb2dqZHVyeGd6bWxjdWpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0NTg3OTEsImV4cCI6MjA3NjAzNDc5MX0.E1VDpkzcq3AzyPiNZOHU2_5IPyx2k76UdZZiaXg3CVk'
+                    }
+                });
+                
+                if (supabaseResponse.ok) {
+                    const supabaseData = await supabaseResponse.json();
+                    console.log('Supabase data:', supabaseData);
+                    
+                    console.log('Testing Django backend...');
+                    const djangoResponse = await fetch('http://localhost:8000/api/frames/');
+                    
+                    if (djangoResponse.ok) {
+                        const djangoData = await djangoResponse.json();
+                        console.log('Django data:', djangoData);
+                        
+                        status.innerHTML = `
+                            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                                <p class="font-bold">✅ جميع الاتصالات تعمل بشكل صحيح!</p>
+                                <p>Supabase: ${supabaseData.length} إطار</p>
+                                <p>Django: ${djangoData.results.length} إطار</p>
+                            </div>
+                        `;
+                        
+                        results.innerHTML = `
+                            <h2 class="text-2xl font-bold mb-4">الإطارات من Django:</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                ${djangoData.results.map(frame => `
+                                    <div class="bg-white p-4 rounded-lg shadow">
+                                        <h3 class="font-bold">${frame.title}</h3>
+                                        <p class="text-gray-600 text-sm">${frame.description}</p>
+                                        <p class="text-blue-600 font-bold">${frame.price} دج</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        results.classList.remove('hidden');
+                    } else {
+                        throw new Error(`Django error: ${djangoResponse.status}`);
+                    }
+                } else {
+                    throw new Error(`Supabase error: ${supabaseResponse.status}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                status.innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        <p class="font-bold">❌ خطأ في الاتصال</p>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Run test when page loads
+        document.addEventListener('DOMContentLoaded', testConnection);
+    </script>
+</body>
+</html>
