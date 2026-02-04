@@ -1368,8 +1368,21 @@ def handle_settings():
     """Handle settings - GET for retrieval, POST for update"""
     global settings
     try:
+    try:
         if request.method == 'GET':
-            return jsonify(settings)
+            # Sanitize before returning
+            fb_id = settings.get("fb_pixel_id")
+            if fb_id is None or str(fb_id).lower() == "null":
+                fb_id = ""
+                
+            tt_id = settings.get("tiktok_pixel_id")
+            if tt_id is None or str(tt_id).lower() == "null":
+                tt_id = ""
+                
+            return jsonify({
+                "fb_pixel_id": fb_id,
+                "tiktok_pixel_id": tt_id
+            })
         elif request.method == 'POST':
             data = request.get_json()
             if not data:
