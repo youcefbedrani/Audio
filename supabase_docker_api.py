@@ -521,6 +521,31 @@ def generate_spotify_waveform_code(audio_url, scan_id, frame_id=None):
         if not waveform_url:
             print("⚠️  Supabase Storage failed or unavailable, saving waveform locally...")
             waveform_url = save_file_locally(waveform_image, waveform_filename, "waveforms")
+            
+            # Verify file exists
+            if waveform_url:
+                local_path = os.path.join("uploads", "waveforms", waveform_filename)
+                if not os.path.exists(local_path):
+                    print(f"❌ Verification failed: File {local_path} missing after save_file_locally!")
+                    waveform_url = None
+                else:
+                    print(f"✅ Verified local file exists: {local_path}")
+
+        # Emergency Fallback if save_file_locally failed
+        if not waveform_url:
+            print("⚠️  EMERGENCY FALLBACK: Manual local save...")
+            try:
+                upload_dir = os.path.join("uploads", "waveforms")
+                if not os.path.exists(upload_dir):
+                    os.makedirs(upload_dir, exist_ok=True)
+                
+                local_path = os.path.join(upload_dir, waveform_filename)
+                with open(local_path, "wb") as f:
+                    f.write(waveform_image)
+                print(f"✅ Manually saved to: {local_path}")
+                waveform_url = f"/api/uploads/waveforms/{waveform_filename}"
+            except Exception as e:
+                print(f"❌ Manual save failed: {e}")
         
         # Create waveform data for storage (includes audio URL for mobile app scanning)
         waveform_data_json = {
@@ -920,10 +945,10 @@ def get_orders_from_supabase(search=None, status=None):
             return orders_list
         else:
             print(f"❌ Supabase error: {response.status_code} - {response.text}")
-            return []
+            return None
     except Exception as e:
         print(f"❌ Error getting from Supabase: {e}")
-        return []
+        return None
 
 @app.route('/api/frames/', methods=['GET'])
 def get_frames():
@@ -956,6 +981,13 @@ def handle_orders():
         # Merge with local orders (apply same filtering locally)
         global orders
         all_orders = []
+        
+        # Check for Supabase failure
+        if supabase_orders is None:
+            print("⚠️ Supabase connection failed.")
+            if not orders: # If no local fallback data, return error to keep frontend state
+                return jsonify({"error": "Database unavailable"}), 503
+            supabase_orders = [] # Fallback to local only if we have some data
         
         # Local filtering
         for o in orders:
