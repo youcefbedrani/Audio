@@ -1899,4 +1899,5 @@ if __name__ == '__main__':
     print(f"   4. Check health: GET http://localhost:8001/health/")
     
     # Disable debug mode to avoid reloader issues
+    # When running with Gunicorn, this block is skipped
     app.run(host='0.0.0.0', port=8001, debug=False)

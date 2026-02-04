@@ -25,7 +25,8 @@ services:
     dns:
       - 8.8.8.8
       - 8.8.4.4
-    command: python3 supabase_docker_api.py
+    # Use Gunicorn for production stability
+    command: gunicorn --bind 0.0.0.0:8001 --workers 4 --timeout 120 supabase_docker_api:app
 
   # Frontend (Static Nginx)
   web:
