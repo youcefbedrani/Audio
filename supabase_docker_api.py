@@ -739,7 +739,7 @@ def generate_fallback_waveform(scan_id, frame_id=None):
             # Retry with timestamp-based filename
             import time
             timestamp = int(time.time())
-            waveform_filename_retry = f"spotify_waveform_fallback_{order_id}_{timestamp}.png"
+            waveform_filename_retry = f"spotify_waveform_fallback_{scan_id}_{timestamp}.png"
             waveform_url = upload_waveform_to_supabase_storage(waveform_image, waveform_filename_retry)
             
             if not waveform_url:
@@ -771,7 +771,7 @@ def generate_fallback_waveform(scan_id, frame_id=None):
         # Create waveform data for storage (fallback waveform - no audio URL available)
         waveform_data_json = {
             "type": "spotify_waveform",
-            "order_id": order_id,
+            "scan_id": scan_id,
             "waveform_url": waveform_url,  # Supabase Storage URL of the waveform image
             "fallback": True,  # Indicates this is a fallback (no audio available)
             "scannable": False,  # Cannot play audio since no audio URL
