@@ -22,6 +22,9 @@ services:
       - ./logs:/app/logs
       # Mount persistence file so it survives container restarts
       - ./orders_persistence.json:/app/orders_persistence.json
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     command: python3 supabase_docker_api.py
 
   # Frontend (Static Nginx)
