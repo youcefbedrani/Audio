@@ -1,4 +1,4 @@
-# Use Nginx Alpine for professional static hosting
+# Use Nginx Alpine for professional static hosting (Updated for VPS)
 FROM nginx:alpine
 
 # Copy professional static files
