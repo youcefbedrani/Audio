@@ -74,12 +74,18 @@ export default function OrderSection() {
                 setScanId(response.order_id || "UNKNOWN");
 
                 // Track Purchase
+                // Track Purchase with Advanced Matching
                 trackEvent("Purchase", {
                     value: 4000,
                     currency: "DZD",
                     content_name: "Audio Frame Art",
                     content_category: "Gift",
                     content_ids: [selectedFrame]
+                }, {
+                    name: formData.name,
+                    phone: formData.phone,
+                    wilaya: formData.wilaya,
+                    address: formData.address
                 });
 
                 // Scroll to top of success message

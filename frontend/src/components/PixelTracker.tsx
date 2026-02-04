@@ -9,14 +9,47 @@ declare global {
         fbq: any;
         ttq: any;
         _fbq: any;
+        pixelGlobalSettings: { fb: string; tt: string };
     }
 }
 
-export const trackEvent = (eventName: string, options?: any) => {
+export const trackEvent = (eventName: string, options?: any, userData?: any) => {
     if (typeof window === "undefined") return;
 
     // Facebook Pixel
     if (window.fbq) {
+        // Advanced Matching: If user data is provided, re-init to send hash
+        if (userData && window.pixelGlobalSettings?.fb) {
+            try {
+                const advancedMatchingParameters: any = {};
+
+                // 1. Phone: Remove leading 0, add +213, remove spaces
+                if (userData.phone) {
+                    let ph = userData.phone.replace(/\D/g, ''); // keep only digits
+                    if (ph.startsWith('0')) ph = ph.substring(1);
+                    if (!ph.startsWith('213')) ph = '213' + ph;
+                    advancedMatchingParameters.ph = ph;
+                }
+
+                // 2. Name: Split into fn/ln
+                if (userData.name) {
+                    const parts = userData.name.trim().split(" ");
+                    if (parts.length > 0) advancedMatchingParameters.fn = parts[0].toLowerCase();
+                    if (parts.length > 1) advancedMatchingParameters.ln = parts.slice(1).join(" ").toLowerCase();
+                }
+
+                // 3. Location
+                if (userData.wilaya) advancedMatchingParameters.st = userData.wilaya.toLowerCase(); // State/Wilaya
+                if (userData.address) advancedMatchingParameters.ct = userData.address.toLowerCase(); // City (approx)
+                advancedMatchingParameters.country = 'dz';
+
+                console.log("[PixelTracker] Sending Advanced Matching:", advancedMatchingParameters);
+                window.fbq('init', window.pixelGlobalSettings.fb, advancedMatchingParameters);
+            } catch (e) {
+                console.error("[PixelTracker] Error processing user data", e);
+            }
+        }
+
         window.fbq("track", eventName, options);
     }
 
@@ -38,6 +71,12 @@ export default function PixelTracker() {
                 const tt = (settings.tiktok_pixel_id && settings.tiktok_pixel_id !== "null") ? settings.tiktok_pixel_id.trim() : "";
 
                 console.log("[PixelTracker] Resolved IDs:", { raw_fb: settings.fb_pixel_id, final_fb: fb });
+
+                // Store globally for trackEvent usage
+                if (typeof window !== 'undefined') {
+                    window.pixelGlobalSettings = { fb, tt };
+                }
+
                 setPixelIds({ fb, tt });
             } catch (err) {
                 console.error("Failed to load pixel settings:", err);
