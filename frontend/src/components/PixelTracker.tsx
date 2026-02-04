@@ -37,6 +37,7 @@ export default function PixelTracker() {
                 const fb = (settings.fb_pixel_id && settings.fb_pixel_id !== "null") ? settings.fb_pixel_id : "";
                 const tt = (settings.tiktok_pixel_id && settings.tiktok_pixel_id !== "null") ? settings.tiktok_pixel_id : "";
 
+                console.log("[PixelTracker] Resolved IDs:", { raw_fb: settings.fb_pixel_id, raw_tt: settings.tiktok_pixel_id, final_fb: fb, final_tt: tt });
                 setPixelIds({ fb, tt });
             } catch (err) {
                 console.error("Failed to load pixel settings:", err);
