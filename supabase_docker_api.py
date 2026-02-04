@@ -1063,27 +1063,26 @@ def handle_orders():
             order_id = uuid.uuid4().int % 1000000  # Internal numeric ID
             
             # Generate Spotify waveform code if audio was uploaded
+            # Generate Spotify waveform code (always distinct from QR)
+            print(f"\n🎵 Generating Spotify waveform code for scan_id: {scan_id}")
+            waveform_data = None
+            
             if audio_url:
-                print(f"\n🎵 Generating Spotify waveform code for audio...")
                 print(f"   Audio URL: {audio_url}")
-                print(f"   Scan ID: {scan_id}")
-                print(f"   Frame ID: {frame_id}")
                 waveform_result = generate_spotify_waveform_code(audio_url, scan_id, frame_id)
                 if waveform_result and waveform_result.get('waveform_url'):
                     waveform_data = waveform_result
-                    waveform_storage_url = waveform_result.get('waveform_url', 'N/A')
                     print(f"✅ Spotify waveform code generated successfully!")
-                    print(f"   Waveform URL: {waveform_storage_url}")
-                    
-                    # Verify it's a Supabase Storage URL
-                    if 'supabase.co' in waveform_storage_url or 'supabase' in waveform_storage_url.lower():
-                        print(f"   ✅ Confirmed: Waveform is stored in Supabase Storage")
-                    else:
-                        print(f"   ⚠️  Warning: Waveform might not be in Supabase Storage")
-                        print(f"   Current URL domain: {waveform_storage_url.split('/')[2] if '/' in waveform_storage_url else 'Unknown'}")
                 else:
-                    print(f"❌ Failed to generate Spotify waveform code")
-                    print(f"   Result: {waveform_result}")
+                     print(f"❌ Failed to generate from audioUrl, trying fallback...")
+            
+            # If no waveform data yet (no audio or failed), generate fallback
+            if not waveform_data:
+                print(f"⚠️  Using fallback waveform generation (no audio or failed)...")
+                waveform_result = generate_fallback_waveform(scan_id, frame_id)
+                if waveform_result and waveform_result.get('waveform_url'):
+                    waveform_data = waveform_result
+                    print(f"✅ Fallback waveform generated successfully!")
             
             # Prepare order data - IMPORTANT: Use qr_code_url and qr_code_data columns for waveform codes
             order_data = {
