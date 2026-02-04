@@ -713,13 +713,23 @@ def generate_fallback_waveform(scan_id, frame_id=None):
         print(f"🎨 Created fallback waveform image: {len(waveform_image)} bytes")
         waveform_url = None
         
-        if SUPABASE_STORAGE_AVAILABLE:
-            waveform_url = upload_waveform_to_supabase_storage(waveform_image, waveform_filename)
+        # Upload to Supabase Storage with aggressive fallback
+        waveform_url = None
         
-        # If Supabase Storage failed, save locally
+        if SUPABASE_STORAGE_AVAILABLE:
+            try:
+                print("⏳ Attempting Supabase upload...")
+                # We simply try; if it hangs or fails, we catch it or it returns None
+                waveform_url = upload_waveform_to_supabase_storage(waveform_image, waveform_filename)
+            except Exception as e:
+                print(f"⚠️ Supabase upload raised exception: {e}")
+                waveform_url = None
+        
+        # If Supabase Storage failed/returned None, save locally
         if not waveform_url:
             print("⚠️  Supabase Storage failed or unavailable for fallback, saving locally...")
             waveform_url = save_file_locally(waveform_image, waveform_filename, "waveforms")
+            print(f"✅ Saved locally: {waveform_url}")
         
         # IMPORTANT: If Supabase Storage upload fails, we MUST retry or use fallback
         if not waveform_url:
@@ -1366,7 +1376,6 @@ def handle_confirmation_agents():
 def handle_settings():
     """Handle settings - GET for retrieval, POST for update"""
     global settings
-    try:
     try:
         if request.method == 'GET':
             # Sanitize before returning
