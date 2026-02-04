@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Flask API with Waveform Code Generation (Development)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=True
+      - SUPABASE_URL=https://qksmfogjdurxgzmlcujb.supabase.co
+      - SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrc21mb2dqZHVyeGd6bWxjdWpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0NTg3OTEsImV4cCI6MjA3NjAzNDc5MX0.E1VDpkzcq3AzyPiNZOHU2_5IPyx2k76UdZZiaXg3CVk
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME:-dulct8pma}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:-your-api-key}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:-your-api-secret}
+    volumes:
+      - .:/app
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    command: python3 supabase_docker_api.py
+
+  # Next.js Frontend (Development)
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:8001
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - api
+    command: npm run dev

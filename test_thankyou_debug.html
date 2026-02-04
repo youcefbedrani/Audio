@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Thank You</title>
+</head>
+<body>
+    <h1>Test Thank You Page</h1>
+    <button onclick="testSave()">Save Test Data</button>
+    <button onclick="testRead()">Read Data</button>
+    <pre id="output"></pre>
+    
+    <script>
+        function testSave() {
+            const testData = {
+                orderId: 'TEST123',
+                firstName: 'محمد',
+                lastName: 'أحمد',
+                customerName: 'محمد أحمد',
+                phone: '0555123456',
+                frameTitle: 'إطار خشبي كلاسيكي',
+                framePrice: '150.0',
+                hasAudio: true
+            };
+            sessionStorage.setItem('orderData', JSON.stringify(testData));
+            document.getElementById('output').textContent = 'Data saved: ' + JSON.stringify(testData, null, 2);
+        }
+        
+        function testRead() {
+            const data = sessionStorage.getItem('orderData');
+            if (data) {
+                const parsed = JSON.parse(data);
+                document.getElementById('output').textContent = 'Data read: ' + JSON.stringify(parsed, null, 2);
+            } else {
+                document.getElementById('output').textContent = 'No data in sessionStorage!';
+            }
+        }
+    </script>
+</body>
+</html>

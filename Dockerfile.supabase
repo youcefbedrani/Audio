@@ -1,0 +1,24 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements_supabase.txt .
+RUN pip install --no-cache-dir -r requirements_supabase.txt
+
+# Copy the Supabase API
+COPY supabase_api.py .
+
+# Create necessary directories
+RUN mkdir -p /app/logs /app/uploads
+
+# Expose port
+EXPOSE 8001
+
+# Run the Supabase API
+CMD ["python3", "supabase_api.py"]

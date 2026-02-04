@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Thank You Page</title>
+</head>
+<body>
+    <h1>Testing Thank You Page Data</h1>
+    <button onclick="testData()">Test with Sample Data</button>
+    <pre id="output"></pre>
+    
+    <script>
+        function testData() {
+            const testOrder = {
+                orderId: '12345',
+                firstName: 'محمد',
+                lastName: 'أحمد',
+                phone: '0555123456',
+                address: 'شارع 1 نوفمبر، رقم 10',
+                wilaya: 'الجزائر',
+                baladya: 'الجزائر الوسطى',
+                frameTitle: 'إطار خشبي كلاسيكي',
+                framePrice: '150.00',
+                hasAudio: true
+            };
+            
+            sessionStorage.setItem('orderData', JSON.stringify(testOrder));
+            document.getElementById('output').textContent = JSON.stringify(testOrder, null, 2);
+            alert('Data saved! Now go to thank-you page');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+name: audio_art_frame
+description: "Audio Art Frame mobile app for scanning QR codes and playing audio messages"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  http: ^1.1.0
+  just_audio: ^0.9.36
+  audio_session: ^0.1.18
+  # Local storage
+  shared_preferences: ^2.2.2
+  
+  # State management
+  provider: ^6.1.1
+  
+  # UI components
+  # cupertino_icons already added above
+  flutter_svg: ^2.0.9
+  
+  # Permissions
+  permission_handler: ^11.0.1
+  
+  # URL launcher
+  url_launcher: ^6.2.1
+  
+  # Device info
+  device_info_plus: ^9.1.1
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+    - assets/icons/
+  
+  # fonts:
+  #   - family: Roboto
+  #     fonts:
+  #       - asset: fonts/Roboto-Regular.ttf
+  #       - asset: fonts/Roboto-Bold.ttf
+  #         weight: 700

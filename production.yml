@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # Flask API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_DEBUG=False
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+      # Mount persistence file so it survives container restarts
+      - ./orders_persistence.json:/app/orders_persistence.json
+    command: python3 supabase_docker_api.py
+
+  # Frontend (Static Nginx)
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.professional
+    restart: unless-stopped
+    # We don't expose 80 directly to host, we go through the main Nginx gateway
+    expose:
+      - "80"
+
+  # Nginx Gateway (Reverse Proxy)
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      # Volume for potential future SSL certs
+      - ./certs:/etc/nginx/ssl:ro
+    depends_on:
+      - api
+      - web
+
+  # Database (Optional - if you want to run DB on VPS instead of Supabase)
+  # Uncomment if you want local DB instead of Supabase
+  # db:
+  #   image: postgres:15
+  #   restart: unless-stopped
+  #   environment:
+  #     - POSTGRES_USER=${DB_USER:-postgres}
+  #     - POSTGRES_PASSWORD=${DB_PASSWORD:-local_password}
+  #     - POSTGRES_DB=${DB_NAME:-audio_art}
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+
+volumes:
+  postgres_data:

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Waveform Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1db954;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .waveform-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .waveform-image {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .info {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .test-button {
+            background: #1db954;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .test-button:hover {
+            background: #1ed760;
+        }
+        .order-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Spotify Waveform Code Test</h1>
+        
+        <div class="info">
+            <p class="success">✅ Successfully replaced QR codes with Spotify-style waveform codes!</p>
+            <p>This page demonstrates the new Spotify waveform generation system.</p>
+        </div>
+
+        <div class="waveform-container">
+            <h3>Generated Spotify Waveform Code</h3>
+            <img id="waveformImage" class="waveform-image" src="" alt="Spotify Waveform Code">
+            <p id="waveformStatus">Loading waveform...</p>
+        </div>
+
+        <div class="order-info">
+            <h4>Order Information:</h4>
+            <div id="orderDetails">Loading order details...</div>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="test-button" onclick="loadLatestOrder()">🔄 Load Latest Order</button>
+            <button class="test-button" onclick="testAudioUpload()">🎤 Test Audio Upload</button>
+        </div>
+
+        <div class="info">
+            <h4>What Changed:</h4>
+            <ul>
+                <li>❌ <strong>Removed:</strong> QR code generation</li>
+                <li>✅ <strong>Added:</strong> Spotify-style waveform code generation</li>
+                <li>🎵 <strong>Features:</strong> Audio analysis using librosa</li>
+                <li>📊 <strong>Visual:</strong> Vertical bars representing audio amplitude</li>
+                <li>🎨 <strong>Style:</strong> White background, black bars, rounded ends</li>
+                <li>☁️ <strong>Storage:</strong> Local + Cloudinary (when configured)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8002';
+        
+        async function loadLatestOrder() {
+            try {
+                const response = await fetch(`${API_BASE}/api/orders/`);
+                const orders = await response.json();
+                
+                if (orders.length > 0) {
+                    const latestOrder = orders[orders.length - 1];
+                    displayOrder(latestOrder);
+                } else {
+                    document.getElementById('waveformStatus').textContent = 'No orders found';
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                document.getElementById('waveformStatus').textContent = 'Error loading orders';
+            }
+        }
+        
+        function displayOrder(order) {
+            const waveformImg = document.getElementById('waveformImage');
+            const waveformStatus = document.getElementById('waveformStatus');
+            const orderDetails = document.getElementById('orderDetails');
+            
+            if (order.waveform_url) {
+                waveformImg.src = order.waveform_url;
+                waveformStatus.textContent = '✅ Spotify waveform loaded successfully!';
+                waveformStatus.style.color = '#28a745';
+            } else {
+                waveformStatus.textContent = '❌ No waveform available for this order';
+                waveformStatus.style.color = '#dc3545';
+            }
+            
+            orderDetails.innerHTML = `
+                <strong>Order ID:</strong> ${order.id}<br>
+                <strong>Customer:</strong> ${order.customer_name}<br>
+                <strong>Email:</strong> ${order.customer_email}<br>
+                <strong>Audio URL:</strong> ${order.audio_file_url || 'None'}<br>
+                <strong>Waveform URL:</strong> ${order.waveform_url || 'None'}<br>
+                <strong>Created:</strong> ${new Date(order.created_at).toLocaleString()}<br>
+                <strong>Waveform Data:</strong> ${order.waveform_data ? 'Available' : 'None'}
+            `;
+        }
+        
+        async function testAudioUpload() {
+            const formData = new FormData();
+            formData.append('customer_name', 'Test User');
+            formData.append('customer_phone', '1234567890');
+            formData.append('customer_email', 'test@example.com');
+            formData.append('delivery_address', '123 Test St');
+            formData.append('city', 'Test City');
+            formData.append('postal_code', '12345');
+            formData.append('frame_id', '1');
+            formData.append('payment_method', 'cash');
+            formData.append('total_amount', '29.99');
+            formData.append('notes', 'Test order with Spotify waveform');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/orders/`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('✅ Test order created successfully!');
+                    loadLatestOrder();
+                } else {
+                    alert('❌ Error creating order: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error creating order:', error);
+                alert('❌ Error creating order: ' + error.message);
+            }
+        }
+        
+        // Load the latest order on page load
+        window.onload = loadLatestOrder;
+    </script>
+</body>
+</html>

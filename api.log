@@ -1,0 +1,600 @@
+nohup: ignoring input
+🚀 Starting Supabase Docker API with Spotify Waveform Code Generation...
+📡 Available endpoints:
+  GET  /api/frames/           - List all frames
+  GET  /api/frames/{id}/      - Get specific frame
+  GET  /api/orders/            - List orders from Supabase
+  POST /api/orders/            - Create order with audio upload & Spotify waveform code
+  GET  /api/scan/{id}/         - Scan frame Spotify waveform code
+  POST /api/track-play/{id}/   - Track audio play
+  GET  /api/statistics/        - Get statistics
+  GET  /api/test-storage/      - Test Supabase Storage connection
+  GET  /health/                 - Health check (includes storage status)
+
+🌐 Server running on http://localhost:8001
+🔗 Supabase URL: https://qksmfogjdurxgzmlcujb.supabase.co
+🎵 Spotify waveform codes will be generated automatically for audio uploads!
+📦 Waveform codes are stored in Supabase Storage (wave_codes bucket)
+📱 Mobile app can scan waveform codes to play recorded audio
+
+⚠️  IMPORTANT Setup:
+   1. Create 'wave_codes' bucket in Supabase Storage Dashboard
+      → Go to Storage → Create bucket → Name: 'wave_codes' → Set PUBLIC
+   2. Create 'api_order' table with columns: audio_file_url, qr_code_url, qr_code_data
+   3. Test storage: GET http://localhost:8001/api/test-storage/
+   4. Check health: GET http://localhost:8001/health/
+ * Serving Flask app 'supabase_docker_api' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://192.168.1.18:8001/ (Press CTRL+C to quit)
+127.0.0.1 - - [24/Jan/2026 11:54:27] "GET /api/frames/ HTTP/1.1" 200 -
+127.0.0.1 - - [24/Jan/2026 11:54:27] "GET /api/frames/ HTTP/1.1" 200 -
+127.0.0.1 - - [24/Jan/2026 11:54:35] "GET /api/frames/2/ HTTP/1.1" 200 -
+127.0.0.1 - - [24/Jan/2026 11:54:35] "GET /api/frames/2/ HTTP/1.1" 200 -
+Traceback (most recent call last):
+  File "/home/badran/.local/lib/python3.10/site-packages/urllib3/connection.py", line 169, in _new_conn
+    conn = connection.create_connection(
+  File "/home/badran/.local/lib/python3.10/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+  File "/usr/lib/python3.10/socket.py", line 955, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno -2] Name or service not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/badran/.local/lib/python3.10/site-packages/urllib3/connectionpool.py", line 699, in urlopen
+    httplib_response = self._make_request(
+  File "/home/badran/.local/lib/python3.10/site-packages/urllib3/connectionpool.py", line 382, in _make_request
+    self._validate_conn(conn)
+  File "/home/badran/.local/lib/python3.10/site-packages/urllib3/connectionpool.py", line 1010, in _validate_conn
+    conn.connect()
+  File "/home/badran/.local/lib/python3.10/site-packages/urllib3/connection.py", line 353, in connect
+    conn = self._new_conn()
+  File "/home/badran/.local/lib/python3.10/site-packages/urllib3/connection.py", line 181, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPSConnection object at 0x7b67f6a6ece0>: Failed to establish a new connection: [Errno -2] Name or service not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/badran/.local/lib/python3.10/site-packages/requests/adapters.py", line 486, in send
+    resp = conn.urlopen(
+  File "/home/badran/.local/lib/python3.10/site-packages/urllib3/connectionpool.py", line 755, in urlopen
+    retries = retries.increment(
+  File "/home/badran/.local/lib/python3.10/site-packages/urllib3/util/retry.py", line 574, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='qksmfogjdurxgzmlcujb.supabase.co', port=443): Max retries exceeded with url: /rest/v1/api_order (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7b67f6a6ece0>: Failed to establish a new connection: [Errno -2] Name or service not known'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/badran/Downloads/Freelance_2025/audio_frame_art/supabase_docker_api.py", line 761, in save_order_to_supabase
+    response = requests.post(url, headers=headers, json=supabase_data)
+  File "/home/badran/.local/lib/python3.10/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "/home/badran/.local/lib/python3.10/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/home/badran/.local/lib/python3.10/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/badran/.local/lib/python3.10/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/badran/.local/lib/python3.10/site-packages/requests/adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='qksmfogjdurxgzmlcujb.supabase.co', port=443): Max retries exceeded with url: /rest/v1/api_order (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7b67f6a6ece0>: Failed to establish a new connection: [Errno -2] Name or service not known'))
+127.0.0.1 - - [24/Jan/2026 11:55:50] "POST /api/orders/ HTTP/1.1" 500 -
+192.168.1.5 - - [24/Jan/2026 11:57:39] "GET /api/play/1/ HTTP/1.1" 404 -
+
+🆕 New order request received
+   Data received: {'frame_id': '2', 'customer_name': 'Mohammed adel asdfasfd', 'customer_phone': '7768768768765765765', 'delivery_address': 'jhkjhkjhkj', 'city': 'سعيدة', 'wilaya': 'سعيدة', 'baladya': 'jhkjhkjhkjh', 'total_amount': '120', 'payment_method': 'COD'}
+💾 Saving order to Supabase...
+
+============================================================
+💾 ATTEMPTING TO SAVE ORDER TO SUPABASE
+============================================================
+   Customer: Mohammed adel asdfasfd
+   Phone: 7768768768765765765
+   Frame: إطار معدني عصري
+   Amount: 120.0
+   Supabase URL: https://qksmfogjdurxgzmlcujb.supabase.co
+   API Endpoint: https://qksmfogjdurxgzmlcujb.supabase.co/rest/v1/api_order
+   Has API Key: True
+
+💾 SAVING WAVEFORM CODE TO DATABASE:
+   audio_file_url: ...
+   qr_code_url (waveform): ...
+   qr_code_data has data: False
+   Sending data to: https://qksmfogjdurxgzmlcujb.supabase.co/rest/v1/api_order
+   Data summary: {
+  "customer_name": "Mohammed adel asdfasfd",
+  "customer_phone": "7768768768765765765",
+  "customer_email": "",
+  "delivery_address": "jhkjhkjhkj",
+  "city": "\u0633\u0639\u064a\u062f\u0629",
+  "wilaya": "\u0633\u0639\u064a\u062f\u0629",
+  "baladya": "jhkjhkjhkjh",
+  "postal_code": "00000",
+  "frame_id": 2,
+  "audio_file_url": "",
+  "qr_code_url": "",
+  "qr_code_data": "",
+  "status": "pending",
+  "payment_method": "COD",
+  "total_amount": 120.0,
+  "notes": ""
+}
+❌ Error saving to Supabase: HTTPSConnectionPool(host='qksmfogjdurxgzmlcujb.supabase.co', port=443): Max retries exceeded with url: /rest/v1/api_order (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7b67f6a6ece0>: Failed to establish a new connection: [Errno -2] Name or service not known'))
+❌ CRITICAL: Failed to save order to Supabase!
+❌ Supabase returned None or empty result
+❌ Order will NOT be saved - returning error to client
+
+🎵 ===== PLAY AUDIO REQUEST ======
+🎵 Audio/Order ID: 1
+📥 Fetching orders from Supabase...
+   Response status: 521
+❌ Supabase error: 521 - <!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en-US"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en-US"> <!--<![endif]-->
+<head>
+
+
+<title>qksmfogjdurxgzmlcujb.supabase.co | 521: Web server is down</title>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" id="cf_styles-css" href="/cdn-cgi/styles/main.css" />
+
+
+</head>
+<body>
+<div id="cf-wrapper">
+    <div id="cf-error-details" class="p-0">
+        <header class="mx-auto pt-10 lg:pt-6 lg:px-8 w-240 lg:w-full mb-8">
+            <h1 class="inline-block sm:block sm:mb-2 font-light text-60 lg:text-4xl text-black-dark leading-tight mr-2">
+              <span class="inline-block">Web server is down</span>
+              <span class="code-label">Error code 521</span>
+            </h1>
+            <div>
+               Visit <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_521&utm_campaign=qksmfogjdurxgzmlcujb.supabase.co" target="_blank" rel="noopener noreferrer">cloudflare.com</a> for more information.
+            </div>
+            <div class="mt-3">2026-01-24 10:57:39 UTC</div>
+        </header>
+        <div class="my-8 bg-gradient-gray">
+            <div class="w-240 lg:w-full mx-auto">
+                <div class="clearfix md:px-8">
+                  
+<div id="cf-browser-status" class=" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
+    
+    <span class="cf-icon-browser block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
+    
+  </div>
+  <span class="md:block w-full truncate">You</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    
+    Browser
+    
+  </h3>
+  <span class="leading-1.3 text-2xl text-green-success">Working</span>
+</div>
+
+<div id="cf-cloudflare-status" class=" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
+    <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_521&utm_campaign=qksmfogjdurxgzmlcujb.supabase.co" target="_blank" rel="noopener noreferrer">
+    <span class="cf-icon-cloud block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
+    </a>
+  </div>
+  <span class="md:block w-full truncate">Oran</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_521&utm_campaign=qksmfogjdurxgzmlcujb.supabase.co" target="_blank" rel="noopener noreferrer">
+    Cloudflare
+    </a>
+  </h3>
+  <span class="leading-1.3 text-2xl text-green-success">Working</span>
+</div>
+
+<div id="cf-host-status" class="cf-error-source relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
+    
+    <span class="cf-icon-server block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-error w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
+    
+  </div>
+  <span class="md:block w-full truncate">qksmfogjdurxgzmlcujb.supabase.co</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    
+    Host
+    
+  </h3>
+  <span class="leading-1.3 text-2xl text-red-error">Error</span>
+</div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="w-240 lg:w-full mx-auto mb-8 lg:px-8">
+            <div class="clearfix">
+                <div class="w-1/2 md:w-full float-left pr-6 md:pb-10 md:pr-0 leading-relaxed">
+                    <h2 class="text-3xl font-normal leading-1.3 mb-4">What happened?</h2>
+                    <p>The web server is not returning a connection. As a result, the web page is not displaying.</p>
+                </div>
+                <div class="w-1/2 md:w-full float-left leading-relaxed">
+                    <h2 class="text-3xl font-normal leading-1.3 mb-4">What can I do?</h2>
+                          <h3 class="text-15 font-semibold mb-2">If you are a visitor of this website:</h3>
+      <p class="mb-6">Please try again in a few minutes.</p>
+
+      <h3 class="text-15 font-semibold mb-2">If you are the owner of this website:</h3>
+      <p><span>Contact your hosting provider letting them know your web server is not responding.</span> <a rel="noopener noreferrer" href="https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-521/">Additional troubleshooting information</a>.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cf-error-footer cf-wrapper w-240 lg:w-full py-10 sm:py-4 sm:px-8 mx-auto text-center sm:text-left border-solid border-0 border-t border-gray-300">
+  <p class="text-13">
+    <span class="cf-footer-item sm:block sm:mb-1">Cloudflare Ray ID: <strong class="font-semibold">9c2f02dbb0ffa0e6</strong></span>
+    <span class="cf-footer-separator sm:hidden">&bull;</span>
+    <span id="cf-footer-item-ip" class="cf-footer-item hidden sm:block sm:mb-1">
+      Your IP:
+      <button type="button" id="cf-footer-ip-reveal" class="cf-footer-ip-reveal-btn">Click to reveal</button>
+      <span class="hidden" id="cf-footer-ip">197.119.184.165</span>
+      <span class="cf-footer-separator sm:hidden">&bull;</span>
+    </span>
+    <span class="cf-footer-item sm:block sm:mb-1"><span>Performance &amp; security by</span> <a rel="noopener noreferrer" href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_521&utm_campaign=qksmfogjdurxgzmlcujb.supabase.co" id="brand_link" target="_blank">Cloudflare</a></span>
+    
+  </p>
+  <script>(function(){function d(){var b=a.getElementById("cf-footer-item-ip"),c=a.getElementById("cf-footer-ip-reveal");b&&"classList"in b&&(b.classList.remove("hidden"),c.addEventListener("click",function(){c.classList.add("hidden");a.getElementById("cf-footer-ip").classList.remove("hidden")}))}var a=document;document.addEventListener&&a.addEventListener("DOMContentLoaded",d)})();</script>
+</div><!-- /.error-footer -->
+
+
+    </div>
+</div>
+</body>
+</html>
+
+❌ No audio found for ID 1
+
+📱 ===== SCAN REQUEST ======
+📱 Frame ID: 1
+✅ Frame found: إطار خشبي كلاسيكي
+📥 Fetching orders from Supabase...
+📥 Fetching orders from Supabase...
+   Response status: 521
+192.168.1.5 - - [24/Jan/2026 11:57:40] "GET /api/scan/1/ HTTP/1.1" 404 -
+❌ Supabase error: 521 - <!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en-US"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en-US"> <!--<![endif]-->
+<head>
+
+
+<title>qksmfogjdurxgzmlcujb.supabase.co | 521: Web server is down</title>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" id="cf_styles-css" href="/cdn-cgi/styles/main.css" />
+
+
+</head>
+<body>
+<div id="cf-wrapper">
+    <div id="cf-error-details" class="p-0">
+        <header class="mx-auto pt-10 lg:pt-6 lg:px-8 w-240 lg:w-full mb-8">
+            <h1 class="inline-block sm:block sm:mb-2 font-light text-60 lg:text-4xl text-black-dark leading-tight mr-2">
+              <span class="inline-block">Web server is down</span>
+              <span class="code-label">Error code 521</span>
+            </h1>
+            <div>
+               Visit <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_521&utm_campaign=qksmfogjdurxgzmlcujb.supabase.co" target="_blank" rel="noopener noreferrer">cloudflare.com</a> for more information.
+            </div>
+            <div class="mt-3">2026-01-24 10:57:39 UTC</div>
+        </header>
+        <div class="my-8 bg-gradient-gray">
+            <div class="w-240 lg:w-full mx-auto">
+                <div class="clearfix md:px-8">
+                  
+<div id="cf-browser-status" class=" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
+    
+    <span class="cf-icon-browser block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
+    
+  </div>
+  <span class="md:block w-full truncate">You</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    
+    Browser
+    
+  </h3>
+  <span class="leading-1.3 text-2xl text-green-success">Working</span>
+</div>
+
+<div id="cf-cloudflare-status" class=" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
+    <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_521&utm_campaign=qksmfogjdurxgzmlcujb.supabase.co" target="_blank" rel="noopener noreferrer">
+    <span class="cf-icon-cloud block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
+    </a>
+  </div>
+  <span class="md:block w-full truncate">Oran</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_521&utm_campaign=qksmfogjdurxgzmlcujb.supabase.co" target="_blank" rel="noopener noreferrer">
+    Cloudflare
+    </a>
+  </h3>
+  <span class="leading-1.3 text-2xl text-green-success">Working</span>
+</div>
+
+<div id="cf-host-status" class="cf-error-source relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
+    
+    <span class="cf-icon-server block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-error w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
+    
+  </div>
+  <span class="md:block w-full truncate">qksmfogjdurxgzmlcujb.supabase.co</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    
+    Host
+    
+  </h3>
+  <span class="leading-1.3 text-2xl text-red-error">Error</span>
+</div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="w-240 lg:w-full mx-auto mb-8 lg:px-8">
+            <div class="clearfix">
+                <div class="w-1/2 md:w-full float-left pr-6 md:pb-10 md:pr-0 leading-relaxed">
+                    <h2 class="text-3xl font-normal leading-1.3 mb-4">What happened?</h2>
+                    <p>The web server is not returning a connection. As a result, the web page is not displaying.</p>
+                </div>
+                <div class="w-1/2 md:w-full float-left leading-relaxed">
+                    <h2 class="text-3xl font-normal leading-1.3 mb-4">What can I do?</h2>
+                          <h3 class="text-15 font-semibold mb-2">If you are a visitor of this website:</h3>
+      <p class="mb-6">Please try again in a few minutes.</p>
+
+      <h3 class="text-15 font-semibold mb-2">If you are the owner of this website:</h3>
+      <p><span>Contact your hosting provider letting them know your web server is not responding.</span> <a rel="noopener noreferrer" href="https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-521/">Additional troubleshooting information</a>.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cf-error-footer cf-wrapper w-240 lg:w-full py-10 sm:py-4 sm:px-8 mx-auto text-center sm:text-left border-solid border-0 border-t border-gray-300">
+  <p class="text-13">
+    <span class="cf-footer-item sm:block sm:mb-1">Cloudflare Ray ID: <strong class="font-semibold">9c2f02dfb1072980</strong></span>
+    <span class="cf-footer-separator sm:hidden">&bull;</span>
+    <span id="cf-footer-item-ip" class="cf-footer-item hidden sm:block sm:mb-1">
+      Your IP:
+      <button type="button" id="cf-footer-ip-reveal" class="cf-footer-ip-reveal-btn">Click to reveal</button>
+      <span class="hidden" id="cf-footer-ip">197.119.184.165</span>
+      <span class="cf-footer-separator sm:hidden">&bull;</span>
+    </span>
+    <span class="cf-footer-item sm:block sm:mb-1"><span>Performance &amp; security by</span> <a rel="noopener noreferrer" href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_521&utm_campaign=qksmfogjdurxgzmlcujb.supabase.co" id="brand_link" target="_blank">Cloudflare</a></span>
+    
+  </p>
+  <script>(function(){function d(){var b=a.getElementById("cf-footer-item-ip"),c=a.getElementById("cf-footer-ip-reveal");b&&"classList"in b&&(b.classList.remove("hidden"),c.addEventListener("click",function(){c.classList.add("hidden");a.getElementById("cf-footer-ip").classList.remove("hidden")}))}var a=document;document.addEventListener&&a.addEventListener("DOMContentLoaded",d)})();</script>
+</div><!-- /.error-footer -->
+
+
+    </div>
+</div>
+</body>
+</html>
+
+📥 Retrieved 0 orders from Supabase
+🔍 Searching for orders with frame_id=1 and audio...
+❌ No audio found for frame_id=1
+   Matching orders found: 0
+
+📱 ===== SCAN REQUEST ======
+📱 Frame ID: 1
+✅ Frame found: إطار خشبي كلاسيكي
+📥 Fetching orders from Supabase...
+📥 Fetching orders from Supabase...
+   Response status: 521
+192.168.1.5 - - [24/Jan/2026 11:57:40] "GET /api/scan/1/ HTTP/1.1" 404 -
+192.168.1.5 - - [24/Jan/2026 11:58:54] "GET /api/play/11321417/ HTTP/1.1" 404 -
+192.168.1.5 - - [24/Jan/2026 11:58:54] "GET /api/scan/11321417/ HTTP/1.1" 404 -
+192.168.1.5 - - [24/Jan/2026 11:58:54] "GET /api/scan/11321417/ HTTP/1.1" 404 -
+192.168.1.5 - - [24/Jan/2026 11:58:55] "GET /api/play/120111611312/ HTTP/1.1" 404 -
+192.168.1.5 - - [24/Jan/2026 11:58:55] "GET /api/scan/120111611312/ HTTP/1.1" 404 -
+192.168.1.5 - - [24/Jan/2026 11:58:55] "GET /api/scan/120111611312/ HTTP/1.1" 404 -
+❌ Supabase error: 521 - <!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en-US"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en-US"> <!--<![endif]-->
+<head>
+
+
+<title>qksmfogjdurxgzmlcujb.supabase.co | 521: Web server is down</title>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" id="cf_styles-css" href="/cdn-cgi/styles/main.css" />
+
+
+</head>
+<body>
+<div id="cf-wrapper">
+    <div id="cf-error-details" class="p-0">
+        <header class="mx-auto pt-10 lg:pt-6 lg:px-8 w-240 lg:w-full mb-8">
+            <h1 class="inline-block sm:block sm:mb-2 font-light text-60 lg:text-4xl text-black-dark leading-tight mr-2">
+              <span class="inline-block">Web server is down</span>
+              <span class="code-label">Error code 521</span>
+            </h1>
+            <div>
+               Visit <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_521&utm_campaign=qksmfogjdurxgzmlcujb.supabase.co" target="_blank" rel="noopener noreferrer">cloudflare.com</a> for more information.
+            </div>
+            <div class="mt-3">2026-01-24 10:57:40 UTC</div>
+        </header>
+        <div class="my-8 bg-gradient-gray">
+            <div class="w-240 lg:w-full mx-auto">
+                <div class="clearfix md:px-8">
+                  
+<div id="cf-browser-status" class=" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
+    
+    <span class="cf-icon-browser block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
+    
+  </div>
+  <span class="md:block w-full truncate">You</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    
+    Browser
+    
+  </h3>
+  <span class="leading-1.3 text-2xl text-green-success">Working</span>
+</div>
+
+<div id="cf-cloudflare-status" class=" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
+    <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_521&utm_campaign=qksmfogjdurxgzmlcujb.supabase.co" target="_blank" rel="noopener noreferrer">
+    <span class="cf-icon-cloud block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
+    </a>
+  </div>
+  <span class="md:block w-full truncate">Oran</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_521&utm_campaign=qksmfogjdurxgzmlcujb.supabase.co" target="_blank" rel="noopener noreferrer">
+    Cloudflare
+    </a>
+  </h3>
+  <span class="leading-1.3 text-2xl text-green-success">Working</span>
+</div>
+
+<div id="cf-host-status" class="cf-error-source relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
+    
+    <span class="cf-icon-server block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-error w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
+    
+  </div>
+  <span class="md:block w-full truncate">qksmfogjdurxgzmlcujb.supabase.co</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    
+    Host
+    
+  </h3>
+  <span class="leading-1.3 text-2xl text-red-error">Error</span>
+</div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="w-240 lg:w-full mx-auto mb-8 lg:px-8">
+            <div class="clearfix">
+                <div class="w-1/2 md:w-full float-left pr-6 md:pb-10 md:pr-0 leading-relaxed">
+                    <h2 class="text-3xl font-normal leading-1.3 mb-4">What happened?</h2>
+                    <p>The web server is not returning a connection. As a result, the web page is not displaying.</p>
+                </div>
+                <div class="w-1/2 md:w-full float-left leading-relaxed">
+                    <h2 class="text-3xl font-normal leading-1.3 mb-4">What can I do?</h2>
+                          <h3 class="text-15 font-semibold mb-2">If you are a visitor of this website:</h3>
+      <p class="mb-6">Please try again in a few minutes.</p>
+
+      <h3 class="text-15 font-semibold mb-2">If you are the owner of this website:</h3>
+      <p><span>Contact your hosting provider letting them know your web server is not responding.</span> <a rel="noopener noreferrer" href="https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-521/">Additional troubleshooting information</a>.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cf-error-footer cf-wrapper w-240 lg:w-full py-10 sm:py-4 sm:px-8 mx-auto text-center sm:text-left border-solid border-0 border-t border-gray-300">
+  <p class="text-13">
+    <span class="cf-footer-item sm:block sm:mb-1">Cloudflare Ray ID: <strong class="font-semibold">9c2f02e2e533d19c</strong></span>
+    <span class="cf-footer-separator sm:hidden">&bull;</span>
+    <span id="cf-footer-item-ip" class="cf-footer-item hidden sm:block sm:mb-1">
+      Your IP:
+      <button type="button" id="cf-footer-ip-reveal" class="cf-footer-ip-reveal-btn">Click to reveal</button>
+      <span class="hidden" id="cf-footer-ip">197.119.184.165</span>
+      <span class="cf-footer-separator sm:hidden">&bull;</span>
+    </span>
+    <span class="cf-footer-item sm:block sm:mb-1"><span>Performance &amp; security by</span> <a rel="noopener noreferrer" href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_521&utm_campaign=qksmfogjdurxgzmlcujb.supabase.co" id="brand_link" target="_blank">Cloudflare</a></span>
+    
+  </p>
+  <script>(function(){function d(){var b=a.getElementById("cf-footer-item-ip"),c=a.getElementById("cf-footer-ip-reveal");b&&"classList"in b&&(b.classList.remove("hidden"),c.addEventListener("click",function(){c.classList.add("hidden");a.getElementById("cf-footer-ip").classList.remove("hidden")}))}var a=document;document.addEventListener&&a.addEventListener("DOMContentLoaded",d)})();</script>
+</div><!-- /.error-footer -->
+
+
+    </div>
+</div>
+</body>
+</html>
+
+📥 Retrieved 0 orders from Supabase
+🔍 Searching for orders with frame_id=1 and audio...
+❌ No audio found for frame_id=1
+   Matching orders found: 0
+
+🎵 ===== PLAY AUDIO REQUEST ======
+🎵 Audio/Order ID: 11321417
+📥 Fetching orders from Supabase...
+   Response status: 404
+❌ Supabase error: 404 - {"code":"PGRST205","details":null,"hint":null,"message":"Could not find the table 'public.api_order' in the schema cache"}
+❌ No audio found for ID 11321417
+
+📱 ===== SCAN REQUEST ======
+📱 Frame ID: 11321417
+❌ Frame 11321417 not found
+
+📱 ===== SCAN REQUEST ======
+📱 Frame ID: 11321417
+❌ Frame 11321417 not found
+
+🎵 ===== PLAY AUDIO REQUEST ======
+🎵 Audio/Order ID: 120111611312
+📥 Fetching orders from Supabase...
+   Response status: 404
+❌ Supabase error: 404 - {"code":"PGRST205","details":null,"hint":null,"message":"Could not find the table 'public.api_order' in the schema cache"}
+❌ No audio found for ID 120111611312
+
+📱 ===== SCAN REQUEST ======
+📱 Frame ID: 120111611312
+❌ Frame 120111611312 not found
+
+📱 ===== SCAN REQUEST ======
+📱 Frame ID: 120111611312
+❌ Frame 120111611312 not found
+
+🎵 ===== PLAY AUDIO REQUEST ======
+192.168.1.5 - - [24/Jan/2026 11:58:56] "GET /api/play/2411484/ HTTP/1.1" 404 -
+192.168.1.5 - - [24/Jan/2026 11:58:57] "GET /api/scan/2411484/ HTTP/1.1" 404 -
+192.168.1.5 - - [24/Jan/2026 11:58:57] "GET /api/scan/2411484/ HTTP/1.1" 404 -
+Traceback (most recent call last):
+  File "/home/badran/Downloads/Freelance_2025/audio_frame_art/supabase_docker_api.py", line 1317, in compare_waveform
+    uploaded_phash = imagehash.phash(uploaded_gray)
+NameError: name 'imagehash' is not defined
+192.168.1.5 - - [24/Jan/2026 11:59:09] "POST /api/compare-waveform/ HTTP/1.1" 500 -
+192.168.1.5 - - [24/Jan/2026 11:59:10] "GET /api/play/1521474/ HTTP/1.1" 404 -
+192.168.1.5 - - [24/Jan/2026 11:59:10] "GET /api/scan/1521474/ HTTP/1.1" 404 -
+192.168.1.5 - - [24/Jan/2026 11:59:10] "GET /api/scan/1521474/ HTTP/1.1" 404 -
+192.168.1.5 - - [24/Jan/2026 11:59:11] "GET /api/play/1221211131621/ HTTP/1.1" 404 -
+192.168.1.5 - - [24/Jan/2026 11:59:11] "GET /api/scan/1221211131621/ HTTP/1.1" 404 -
+192.168.1.5 - - [24/Jan/2026 11:59:11] "GET /api/scan/1221211131621/ HTTP/1.1" 404 -
+127.0.0.1 - - [24/Jan/2026 13:09:23] "GET /api/frames/2/ HTTP/1.1" 200 -
+127.0.0.1 - - [24/Jan/2026 13:18:41] "GET /api/frames/ HTTP/1.1" 200 -
+127.0.0.1 - - [24/Jan/2026 13:18:43] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [24/Jan/2026 13:54:48] "GET /api/frames/ HTTP/1.1" 200 -
+127.0.0.1 - - [24/Jan/2026 14:10:18] "GET /api/frames/ HTTP/1.1" 200 -
+127.0.0.1 - - [24/Jan/2026 14:11:14] "GET /api/frames/ HTTP/1.1" 200 -
+127.0.0.1 - - [24/Jan/2026 14:11:57] "GET /api/frames/ HTTP/1.1" 200 -

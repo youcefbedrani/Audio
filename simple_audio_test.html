@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Frame Art - Simple Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        audio {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .url-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Audio Frame Art - Simple Test</h1>
+        
+        <div class="test-section">
+            <h3>Test Audio Playback</h3>
+            <p>Enter an audio URL to test playback:</p>
+            <input type="text" id="audioUrl" class="url-input" 
+                   value="http://localhost:8001/uploads/audio_3774e147-24ec-4cdc-a6aa-785c0309f910_direct_test.txt" />
+            <button class="test-button" onclick="testAudio()">Test Audio</button>
+            
+            <div id="status"></div>
+            
+            <audio id="audioPlayer" controls style="display: none;">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        
+        <div class="test-section">
+            <h3>Quick Tests</h3>
+            <button class="test-button" onclick="loadRecentAudio()">Load Recent Audio</button>
+            <button class="test-button" onclick="testQRScan()">Test QR Scan</button>
+            <div id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        // Test audio playback
+        function testAudio() {
+            const url = document.getElementById('audioUrl').value;
+            const audioPlayer = document.getElementById('audioPlayer');
+            const statusDiv = document.getElementById('status');
+            
+            if (!url) {
+                statusDiv.innerHTML = '<div class="error">Please enter an audio URL</div>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<div>Loading audio...</div>';
+            
+            // Set audio source
+            audioPlayer.src = url;
+            audioPlayer.style.display = 'block';
+            
+            // Test if audio loads
+            audioPlayer.onloadeddata = () => {
+                statusDiv.innerHTML = '<div class="success">✅ Audio loaded successfully! You should be able to play it now.</div>';
+            };
+            
+            audioPlayer.onerror = (e) => {
+                statusDiv.innerHTML = '<div class="error">❌ Error loading audio. Check the URL and file format.</div>';
+                console.error('Audio error:', e);
+            };
+            
+            // Try to load
+            audioPlayer.load();
+        }
+        
+        // Load recent audio
+        async function loadRecentAudio() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div>Loading recent orders...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:8001/api/orders/');
+                const orders = await response.json();
+                
+                // Show last 3 orders with audio
+                const audioOrders = orders.filter(o => o.audio_file_url).slice(-3);
+                
+                if (audioOrders.length === 0) {
+                    resultsDiv.innerHTML = '<div class="error">No orders with audio found.</div>';
+                    return;
+                }
+                
+                let html = '<h4>Recent Audio Files:</h4>';
+                audioOrders.forEach(order => {
+                    html += `
+                        <div style="margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <strong>Order ${order.id}</strong> - ${order.customer_name}<br>
+                            <small>Audio: ${order.audio_file_url}</small><br>
+                            <button class="test-button" onclick="document.getElementById('audioUrl').value='${order.audio_file_url}'; testAudio();">Test This Audio</button>
+                        </div>
+                    `;
+                });
+                
+                resultsDiv.innerHTML = html;
+            } catch (error) {
+                resultsDiv.innerHTML = '<div class="error">Error loading orders: ' + error.message + '</div>';
+            }
+        }
+        
+        // Test QR scan
+        async function testQRScan() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div>Testing QR scan...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:8001/api/scan/1/');
+                const data = await response.json();
+                
+                if (data.audio_url) {
+                    resultsDiv.innerHTML = `
+                        <div class="success">
+                            ✅ QR scan successful!<br>
+                            <strong>Frame:</strong> ${data.frame_title}<br>
+                            <strong>Audio URL:</strong> ${data.audio_url}<br>
+                            <button class="test-button" onclick="document.getElementById('audioUrl').value='${data.audio_url}'; testAudio();">Test This Audio</button>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = '<div class="error">❌ No audio found for this frame</div>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<div class="error">❌ QR scan failed: ' + error.message + '</div>';
+            }
+        }
+    </script>
+</body>
+</html>

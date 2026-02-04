@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Frame Art - Test Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border-color: #bee5eb; color: #0c5460; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+        .qr-code { text-align: center; margin: 20px 0; }
+        .status { font-weight: bold; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Audio Frame Art - Test Dashboard</h1>
+        
+        <div class="test-section info">
+            <h2>📋 Testing Instructions</h2>
+            <p><strong>Website:</strong> <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></p>
+            <p><strong>Mobile App:</strong> <a href="http://localhost:8081" target="_blank">http://localhost:8081</a></p>
+            <p><strong>API Health:</strong> <a href="http://localhost:8001/health/" target="_blank">http://localhost:8001/health/</a></p>
+        </div>
+
+        <div class="test-section">
+            <h2>🌐 Website Testing</h2>
+            <button onclick="testWebsite()">Test Website</button>
+            <button onclick="testAPI()">Test API</button>
+            <button onclick="testOrderCreation()">Test Order Creation</button>
+            <div id="website-status"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📱 Mobile App Testing</h2>
+            <p>1. Open the mobile app: <a href="http://localhost:8081" target="_blank">http://localhost:8081</a></p>
+            <p>2. Grant camera permission when prompted</p>
+            <p>3. Use the QR code below to test scanning:</p>
+            
+            <div class="qr-code">
+                <h3>Test QR Code</h3>
+                <p>Scan this QR code with the mobile app:</p>
+                <div id="qr-code-container">
+                    <p>QR Code URL: <code>http://localhost:8001/api/scan/1/</code></p>
+                    <p>You can generate a QR code at: <a href="https://www.qr-code-generator.com/" target="_blank">QR Code Generator</a></p>
+                </div>
+            </div>
+            
+            <button onclick="testMobileApp()">Test Mobile App</button>
+            <div id="mobile-status"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔧 API Testing</h2>
+            <button onclick="testAllEndpoints()">Test All API Endpoints</button>
+            <div id="api-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 System Status</h2>
+            <button onclick="checkSystemStatus()">Check System Status</button>
+            <div id="system-status"></div>
+        </div>
+
+        <div class="test-section info">
+            <h2>🎯 Expected Results</h2>
+            <ul>
+                <li>✅ Website loads with Arabic content</li>
+                <li>✅ 6 frames are displayed</li>
+                <li>✅ Order form works</li>
+                <li>✅ Audio recording/upload works</li>
+                <li>✅ Mobile app scans QR codes</li>
+                <li>✅ Audio plays in mobile app</li>
+                <li>✅ All API endpoints respond</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function testWebsite() {
+            const status = document.getElementById('website-status');
+            status.innerHTML = '<p>Testing website...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:3000');
+                if (response.ok) {
+                    status.innerHTML = '<div class="success"><p>✅ Website is working!</p></div>';
+                } else {
+                    status.innerHTML = '<div class="error"><p>❌ Website returned error: ' + response.status + '</p></div>';
+                }
+            } catch (error) {
+                status.innerHTML = '<div class="error"><p>❌ Website not accessible: ' + error.message + '</p></div>';
+            }
+        }
+
+        async function testAPI() {
+            const status = document.getElementById('website-status');
+            status.innerHTML = '<p>Testing API...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8001/health/');
+                if (response.ok) {
+                    const data = await response.json();
+                    status.innerHTML = '<div class="success"><p>✅ API is working! Status: ' + data.status + '</p></div>';
+                } else {
+                    status.innerHTML = '<div class="error"><p>❌ API returned error: ' + response.status + '</p></div>';
+                }
+            } catch (error) {
+                status.innerHTML = '<div class="error"><p>❌ API not accessible: ' + error.message + '</p></div>';
+            }
+        }
+
+        async function testOrderCreation() {
+            const status = document.getElementById('website-status');
+            status.innerHTML = '<p>Testing order creation...</p>';
+            
+            try {
+                const orderData = new FormData();
+                orderData.append('customer_name', 'Test User');
+                orderData.append('customer_phone', '0555123456');
+                orderData.append('delivery_address', 'Test Address');
+                orderData.append('city', 'Algiers');
+                orderData.append('wilaya', 'الجزائر');
+                orderData.append('baladya', 'الجزائر');
+                orderData.append('frame', '1');
+                orderData.append('payment_method', 'COD');
+
+                const response = await fetch('http://localhost:8001/api/orders/', {
+                    method: 'POST',
+                    body: orderData
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    status.innerHTML = '<div class="success"><p>✅ Order created successfully! ID: ' + data.id + '</p></div>';
+                } else {
+                    const error = await response.text();
+                    status.innerHTML = '<div class="error"><p>❌ Order creation failed: ' + error + '</p></div>';
+                }
+            } catch (error) {
+                status.innerHTML = '<div class="error"><p>❌ Order creation error: ' + error.message + '</p></div>';
+            }
+        }
+
+        async function testMobileApp() {
+            const status = document.getElementById('mobile-status');
+            status.innerHTML = '<p>Testing mobile app...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8081');
+                if (response.ok) {
+                    status.innerHTML = '<div class="success"><p>✅ Mobile app is accessible!</p><p>Open <a href="http://localhost:8081" target="_blank">http://localhost:8081</a> to test</p></div>';
+                } else {
+                    status.innerHTML = '<div class="error"><p>❌ Mobile app not accessible: ' + response.status + '</p></div>';
+                }
+            } catch (error) {
+                status.innerHTML = '<div class="error"><p>❌ Mobile app not running: ' + error.message + '</p></div>';
+            }
+        }
+
+        async function testAllEndpoints() {
+            const results = document.getElementById('api-results');
+            results.innerHTML = '<p>Testing all API endpoints...</p>';
+            
+            const endpoints = [
+                { name: 'Health Check', url: 'http://localhost:8001/health/' },
+                { name: 'Frames List', url: 'http://localhost:8001/api/frames/' },
+                { name: 'QR Scan', url: 'http://localhost:8001/api/scan/1/' },
+                { name: 'Statistics', url: 'http://localhost:8001/api/statistics/' }
+            ];
+            
+            let html = '<h3>API Test Results:</h3>';
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(endpoint.url);
+                    if (response.ok) {
+                        html += '<div class="success"><p>✅ ' + endpoint.name + ' - OK</p></div>';
+                    } else {
+                        html += '<div class="error"><p>❌ ' + endpoint.name + ' - Error: ' + response.status + '</p></div>';
+                    }
+                } catch (error) {
+                    html += '<div class="error"><p>❌ ' + endpoint.name + ' - Error: ' + error.message + '</p></div>';
+                }
+            }
+            
+            results.innerHTML = html;
+        }
+
+        async function checkSystemStatus() {
+            const status = document.getElementById('system-status');
+            status.innerHTML = '<p>Checking system status...</p>';
+            
+            const checks = [
+                { name: 'Website', url: 'http://localhost:3000' },
+                { name: 'API', url: 'http://localhost:8001/health/' },
+                { name: 'Mobile App', url: 'http://localhost:8081' }
+            ];
+            
+            let html = '<h3>System Status:</h3>';
+            
+            for (const check of checks) {
+                try {
+                    const response = await fetch(check.url);
+                    if (response.ok) {
+                        html += '<div class="success"><p>✅ ' + check.name + ' - Running</p></div>';
+                    } else {
+                        html += '<div class="error"><p>❌ ' + check.name + ' - Error: ' + response.status + '</p></div>';
+                    }
+                } catch (error) {
+                    html += '<div class="error"><p>❌ ' + check.name + ' - Not Running</p></div>';
+                }
+            }
+            
+            status.innerHTML = html;
+        }
+
+        // Auto-check system status on page load
+        window.onload = function() {
+            checkSystemStatus();
+        };
+    </script>
+</body>
+</html>
