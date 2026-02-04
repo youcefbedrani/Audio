@@ -141,7 +141,10 @@ export default function AdminPage() {
     try {
       await deleteOrder(orderId);
       // Optimistic delete
-      setOrders((prev) => prev.filter((o) => o.id !== orderId));
+      const filterList = (list: Order[]) => list.filter((o) => o.id !== orderId);
+
+      setOrders((prev) => filterList(prev));
+      setVisibleOrders((prev) => filterList(prev));
       setTotalOrders((prev) => prev - 1);
     } catch (error) {
       alert("فشل حذف الطلب");
@@ -165,11 +168,13 @@ export default function AdminPage() {
     try {
       await updateOrderDetails(editingOrder.id, editForm);
       // Optimistic update
-      setOrders((prev) =>
-        prev.map((o) =>
+      const updateList = (list: Order[]) =>
+        list.map((o) =>
           o.id === editingOrder.id ? { ...o, ...editForm } : o
-        )
-      );
+        );
+
+      setOrders((prev) => updateList(prev));
+      setVisibleOrders((prev) => updateList(prev));
       setEditingOrder(null);
     } catch (error) {
       alert("فشل حفظ التعديلات");
@@ -191,13 +196,14 @@ export default function AdminPage() {
 
     try {
       // Optimistic update
-      setOrders((prev) =>
-        prev.map((o) =>
-          o.id === orderId
-            ? { ...o, status: newStatus as Order['status'], confirmation_agent: newAgent }
-            : o
-        )
-      );
+      const updatedOrder = { ...currentOrder, status: newStatus as Order['status'], confirmation_agent: newAgent };
+
+      const updateList = (list: Order[]) =>
+        list.map((o) => (o.id === orderId ? updatedOrder : o));
+
+      setOrders((prev) => updateList(prev));
+      setVisibleOrders((prev) => updateList(prev));
+
       await updateOrderStatus(orderId, newStatus as string, newAgent);
     } catch (error) {
       console.error("Failed to update order", error);
