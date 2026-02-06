@@ -86,7 +86,7 @@ class OrderListCreateView(generics.ListCreateAPIView):
         if status_filter:
             queryset = queryset.filter(status=status_filter)
             
-        return queryset.select_related('user', 'frame').order_by('-created_at')
+        return queryset.select_related('user', 'frame').order_by('-created_at', '-id')
     
     def perform_create(self, serializer):
         # For public orders, create a guest user or use a default user

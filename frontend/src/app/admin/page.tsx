@@ -69,7 +69,7 @@ export default function AdminPage() {
     }
   };
 
-  const fetchOrders = async (silent = false) => {
+  const fetchOrders = async (silent = false, signal?: AbortSignal) => {
     if (!silent) setLoading(true);
     try {
       const data: any = await getOrders(page, limit, searchTerm);
@@ -81,8 +81,10 @@ export default function AdminPage() {
       } else {
         // Fallback for non-paginated response
         const ordersArr = Array.isArray(data) ? data : [];
-        setOrders(ordersArr);
-        setVisibleOrders(ordersArr);
+        if (JSON.stringify(ordersArr) !== JSON.stringify(orders)) {
+          setOrders(ordersArr);
+          setVisibleOrders(ordersArr);
+        }
       }
     } catch (error) {
       console.error("Failed to load orders", error);
@@ -115,7 +117,7 @@ export default function AdminPage() {
         if (!document.hidden) {
           fetchOrders(true);
         }
-      }, 3000);
+      }, 10000);
 
       return () => {
         clearTimeout(debounceTimer);
