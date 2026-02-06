@@ -45,6 +45,7 @@ export const createOrder = async (
     formData.append("wilaya", orderData.wilaya);
     formData.append("address", orderData.delivery_address);
     formData.append("baladiya", orderData.baladya || orderData.wilaya);
+    formData.append("city", orderData.baladya || orderData.wilaya); // Required by backend
     formData.append("frame_id", String(orderData.frame_id));
 
     // Append audio file
