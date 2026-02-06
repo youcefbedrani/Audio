@@ -43,6 +43,7 @@ services:
     volumes:
       - ./nginx_proxy.conf:/etc/nginx/nginx.conf:ro
       - ./certs:/etc/nginx/ssl:ro
+      - ./uploads:/var/www/uploads:ro
     depends_on:
       - frontend
       - api
