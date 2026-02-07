@@ -571,8 +571,9 @@ def analyze_audio_waveform(audio_data):
     try:
         # Save audio data to temporary file
         with BytesIO(audio_data) as audio_buffer:
-            # Load audio with librosa
-            y, sr = librosa.load(audio_buffer, sr=None)
+            # Load audio with librosa - OPTIMIZED for performance
+            # sr=8000 is enough for visualization, duration=60 to prevent huge files hanging server
+            y, sr = librosa.load(audio_buffer, sr=8000, mono=True, duration=60)
             
             # Calculate RMS energy for each segment (Spotify-style analysis)
             bar_count = 60  # Standard Spotify configuration
