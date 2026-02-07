@@ -72,22 +72,36 @@ export default function AdminPage() {
   const fetchOrders = async (silent = false, signal?: AbortSignal) => {
     if (!silent) setLoading(true);
     try {
+      console.log(`[Admin] Fetching orders (Page: ${page}, Limit: ${limit})...`);
       const data: any = await getOrders(page, limit, searchTerm);
-      if (data.orders) {
+
+      console.log(`[Admin] Orders received:`, data);
+
+      if (data && data.orders) {
         setOrders(data.orders);
         setVisibleOrders(data.orders);
         setTotalPages(data.total_pages);
         setTotalOrders(data.total);
       } else {
         // Fallback for non-paginated response
-        const ordersArr = Array.isArray(data) ? data : [];
+        const ordersArr = Array.isArray(data) ? data : (data.results || []);
+        console.log(`[Admin] Handled as array/results:`, ordersArr.length);
+
+        // Only update if data changed to avoid flickering
         if (JSON.stringify(ordersArr) !== JSON.stringify(orders)) {
           setOrders(ordersArr);
           setVisibleOrders(ordersArr);
         }
       }
-    } catch (error) {
-      console.error("Failed to load orders", error);
+    } catch (error: any) {
+      console.error("[Admin] Failed to load orders:", error);
+      if (error.response) {
+        console.error("[Admin] Server responded with:", error.response.status, error.response.data);
+      } else if (error.request) {
+        console.error("[Admin] No response received (Network Error)");
+      } else {
+        console.error("[Admin] Request setup error:", error.message);
+      }
     } finally {
       if (!silent) setLoading(false);
     }
@@ -112,12 +126,12 @@ export default function AdminPage() {
         fetchOrders(false);
       }, 500);
 
-      // Polling Interval
+      // Polling Interval - Increased to 30s to reduce load
       const interval = setInterval(() => {
         if (!document.hidden) {
           fetchOrders(true);
         }
-      }, 10000);
+      }, 30000);
 
       return () => {
         clearTimeout(debounceTimer);
