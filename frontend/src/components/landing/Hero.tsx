@@ -5,7 +5,19 @@ import { Scan } from 'lucide-react';
 
 export default function Hero() {
     return (
-        <section className="min-h-screen flex flex-col justify-center items-center text-center bg-[radial-gradient(circle_at_center,_#1c2533_0%,_#111822_100%)] px-4">
+        <section className="min-h-screen flex flex-col justify-center items-center text-center bg-[radial-gradient(circle_at_center,_#1c2533_0%,_#111822_100%)] px-4 py-12">
+
+            {/* App Logo */}
+            <div className="mb-6 animate-fade-in">
+                <Image
+                    src="/icon.png"
+                    alt="Logo"
+                    width={120}
+                    height={120}
+                    className="w-24 h-24 md:w-32 md:h-32 object-contain drop-shadow-[0_0_15px_rgba(255,215,60,0.3)]"
+                />
+            </div>
+
             <h1 className="gold-text text-4xl md:text-6xl font-bold mb-4 leading-tight">
                 بصمة صوتك.. تحفةٌ تلمعُ للأبد
             </h1>
