@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import TextScanner from "@/components/TextScanner";
+import WebScanner from "@/components/WebScanner";
 import Link from "next/link";
 import { ArrowRight, Play, Pause, Music, User, Clock, Loader2, Volume2, AlertCircle, Camera, Keyboard } from "lucide-react";
 import axios from "axios";
@@ -67,16 +67,28 @@ export default function ScanPage() {
 
                 // Auto-play audio immediately
                 if (response.data.audio_url) {
-                    setTimeout(() => {
-                        const audio = new Audio(response.data.audio_url);
-                        audio.play().catch(e => console.error("Auto-play failed:", e));
+                    const audioUrl = response.data.audio_url;
 
-                        // Also sync with the hidden audio element for UI controls
-                        if (audioRef.current) {
-                            audioRef.current.src = response.data.audio_url;
-                            audioRef.current.play().catch(() => { });
-                        }
-                    }, 100);
+                    // Create minimal audio instance for immediate feedback
+                    const audio = new Audio(audioUrl);
+
+                    try {
+                        // User interaction (camera click/tap) usually allows this
+                        await audio.play();
+                        setIsPlaying(true);
+                    } catch (e) {
+                        console.warn("Auto-play blocked by browser policy:", e);
+                        // We still set isPlaying to true so the UI reflects it, 
+                        // and the user can click play if needed.
+                        setIsPlaying(false);
+                    }
+
+                    // Sync with the hidden audio element for persistence/controls
+                    if (audioRef.current) {
+                        audioRef.current.src = audioUrl;
+                        // If the first one failed, this might too, but we try anyway
+                        audioRef.current.play().catch(e => console.warn("Ref auto-play failed:", e));
+                    }
                 }
             } else {
                 setError("No audio found for this ID");
@@ -175,7 +187,7 @@ export default function ScanPage() {
                                     <p className="text-stone-600 font-bold font-arabic">وجه الكاميرا نحو الإطار</p>
                                     <p className="text-stone-400 text-xs mt-1 font-arabic">سيتم التعرف على الموجة الصوتية وتشغيلها تلقائياً</p>
                                 </div>
-                                <TextScanner
+                                <WebScanner
                                     onScan={handleScan}
                                     onClose={() => setMode("choice")}
                                 />
