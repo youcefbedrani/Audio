@@ -18,6 +18,11 @@ const amiri = Amiri({
 export const metadata: Metadata = {
   title: "إطار الصوت الفني",
   description: "أنشئ إطارات فنية شخصية مع رموز QR التي ترتبط برسائلك الصوتية",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({

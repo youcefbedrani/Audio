@@ -1,0 +1,21 @@
+{
+    "name": "إطار الصوت الفني",
+    "short_name": "AudioFrame",
+    "description": "أنشئ إطارات فنية شخصية مع رموز QR التي ترتبط برسائلك الصوتية",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "icons": [
+        {
+            "src": "/icon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/icon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
