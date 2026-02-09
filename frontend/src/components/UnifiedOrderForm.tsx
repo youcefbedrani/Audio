@@ -19,21 +19,21 @@ const FRAMES = [
         id: 1,
         title: "Simple Order",
         subtitle: "إطار عصري أنيق",
-        price: 3500,
+        price: 5000,
         image: "/assets/order-simple.png",
     },
     {
         id: 2,
         title: "VIP Order",
         subtitle: "إطار فاخر + تغليف ملكي",
-        price: 4500, // Assuming higher price for VIP, but code said 3500. Keeping customizable.
+        price: 6000,
         image: "/assets/order-vip.png",
     },
     {
         id: 3,
         title: "Handmade Order",
         subtitle: "إطار وتغليف مرصع مشغول يدوياً",
-        price: 5500, // Assuming higher price
+        price: 7000,
         image: "/assets/order-handmade.png",
     }
 ];

@@ -518,7 +518,15 @@ export default function AdminPage() {
                         </div>
                         <div className="text-xs text-stone-400 mt-1">{order.frame_title}</div>
                       </td>
-                      <td className="p-4 align-top font-bold text-stone-900">{order.total_amount} د.ج</td>
+                      <td className="p-4 align-top">
+                        <div className="font-bold text-stone-900">{order.total_amount} د.ج</div>
+                        <div className="text-xs text-stone-500 font-medium mt-1">
+                          {order.frame_id === 1 ? "Simple" :
+                            order.frame_id === 2 ? "VIP" :
+                              order.frame_id === 3 ? "Handmade" :
+                                order.frame_title || "Unknown"}
+                        </div>
+                      </td>
                       <td className="p-4 align-top">
                         <select
                           value={order.confirmation_agent || ""}
