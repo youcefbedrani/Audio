@@ -66,62 +66,32 @@ if CLOUDINARY_AVAILABLE:
 FRAMES_DATA = [
     {
         "id": 1,
-        "title": "إطار خشبي كلاسيكي",
+        "title": "Simple Order",
         "description": "إطار خشبي أنيق مصنوع من خشب البلوط الطبيعي، مثالي للصور العائلية والذكريات الثمينة.",
-        "frame_type": "wooden",
-        "price": 3500.00,
+        "frame_type": "simple",
+        "price": 5000.00,
         "is_available": True,
-        "image": "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400",
+        "image": "/assets/order-simple.png",
         "created_at": "2024-01-01T00:00:00Z"
     },
     {
         "id": 2,
-        "title": "إطار معدني عصري",
+        "title": "VIP Order",
         "description": "إطار معدني أنيق بتصميم عصري، مثالي للمكاتب والمنازل العصرية.",
-        "frame_type": "metal",
-        "price": 3500.00,
+        "frame_type": "vip",
+        "price": 6000.00,
         "is_available": True,
-        "image": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400",
+        "image": "/assets/order-vip.png",
         "created_at": "2024-01-01T00:00:00Z"
     },
     {
         "id": 3,
-        "title": "إطار زجاجي شفاف",
+        "title": "Handmade Order",
         "description": "إطار زجاجي شفاف أنيق، يبرز جمال الصورة دون إلهاء.",
-        "frame_type": "glass",
-        "price": 3500.00,
+        "frame_type": "handmade",
+        "price": 7000.00,
         "is_available": True,
-        "image": "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400",
-        "created_at": "2024-01-01T00:00:00Z"
-    },
-    {
-        "id": 4,
-        "title": "إطار بلاستيكي ملون",
-        "description": "إطار بلاستيكي بألوان زاهية، مثالي لغرف الأطفال والمساحات المبهجة.",
-        "frame_type": "plastic",
-        "price": 3500.00,
-        "is_available": True,
-        "image": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400",
-        "created_at": "2024-01-01T00:00:00Z"
-    },
-    {
-        "id": 5,
-        "title": "إطار خشبي فاخر",
-        "description": "إطار خشبي فاخر منحوت يدوياً، قطعة فنية حقيقية تليق بأهم اللحظات.",
-        "frame_type": "wooden",
-        "price": 3500.00,
-        "is_available": True,
-        "image": "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400",
-        "created_at": "2024-01-01T00:00:00Z"
-    },
-    {
-        "id": 6,
-        "title": "إطار معدني ذهبي",
-        "description": "إطار معدني مذهب أنيق، يضفي لمسة من الفخامة والأناقة على أي مساحة.",
-        "frame_type": "metal",
-        "price": 3500.00,
-        "is_available": True,
-        "image": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400",
+        "image": "/assets/order-handmade.png",
         "created_at": "2024-01-01T00:00:00Z"
     }
 ]
