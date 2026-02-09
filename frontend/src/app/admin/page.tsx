@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Search, Download, Play, Pause, ExternalLink, UserCheck, Plus, UserPlus, Trash2, Edit, ChevronLeft, ChevronRight, X, Save, Users, Copy, Settings as SettingsIcon } from "lucide-react";
+import AdminStats from "@/components/AdminStats";
 import { getOrders, updateOrderStatus, getConfirmationAgents, addConfirmationAgent, deleteConfirmationAgent, deleteOrder, updateOrderDetails, getSettings, updateSettings, Settings } from "@/lib/api";
 import { Order } from "@/lib/types";
 import Login from "@/components/Login";
@@ -439,6 +440,8 @@ export default function AdminPage() {
             </div>
           </div>
         </header>
+
+        <AdminStats orders={orders} />
 
         {loading ? (
           <div className="text-center py-20 text-stone-500">جاري تحميل البيانات...</div>
