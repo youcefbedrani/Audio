@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import WebScanner from "@/components/WebScanner";
+import UnifiedScanner from "@/components/UnifiedScanner";
 import Link from "next/link";
 import { ArrowRight, Play, Pause, Music, User, Clock, Loader2, Volume2, AlertCircle, Camera, Keyboard } from "lucide-react";
 import axios from "axios";
@@ -187,7 +187,7 @@ export default function ScanPage() {
                                     <p className="text-stone-600 font-bold font-arabic">وجه الكاميرا نحو الإطار</p>
                                     <p className="text-stone-400 text-xs mt-1 font-arabic">سيتم التعرف على الموجة الصوتية وتشغيلها تلقائياً</p>
                                 </div>
-                                <WebScanner
+                                <UnifiedScanner
                                     onScan={handleScan}
                                     onClose={() => setMode("choice")}
                                 />

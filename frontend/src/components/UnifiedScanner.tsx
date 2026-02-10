@@ -1,36 +1,37 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createWorker, Worker } from "tesseract.js";
-import { X, Camera, RefreshCw } from "lucide-react";
+import jsQR from "jsqr";
+import { X, Camera, RefreshCw, Zap } from "lucide-react";
 
-interface WebScannerProps {
+interface UnifiedScannerProps {
     onScan: (result: string) => void;
     onClose: () => void;
     isEmbedded?: boolean;
 }
 
-export default function WebScanner({ onScan, onClose, isEmbedded = false }: WebScannerProps) {
+export default function UnifiedScanner({ onScan, onClose, isEmbedded = false }: UnifiedScannerProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const workerRef = useRef<Worker | null>(null);
     const [isScanning, setIsScanning] = useState(false);
     const [initializing, setInitializing] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [scanMode, setScanMode] = useState<'qr' | 'ocr'>('qr');
     const streamRef = useRef<MediaStream | null>(null);
     const scanIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const lastScanRef = useRef<string>("");
+    const lastScanTimeRef = useRef<number>(0);
 
-    // Initialize Tesseract worker
+    // Initialize Tesseract worker for OCR fallback
     useEffect(() => {
         const initWorker = async () => {
             try {
                 const worker = await createWorker('eng');
-
-                // Configure for the specific ID format (letters, numbers, #)
                 await worker.setParameters({
                     tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#',
                 });
-
                 workerRef.current = worker;
                 setInitializing(false);
                 startCamera();
@@ -92,7 +93,7 @@ export default function WebScanner({ onScan, onClose, isEmbedded = false }: WebS
     };
 
     const processFrame = async () => {
-        if (!videoRef.current || !canvasRef.current || !workerRef.current || !isScanning) return;
+        if (!videoRef.current || !canvasRef.current || !isScanning) return;
 
         const video = videoRef.current;
         const canvas = canvasRef.current;
@@ -100,74 +101,85 @@ export default function WebScanner({ onScan, onClose, isEmbedded = false }: WebS
 
         if (!ctx) return;
 
-        // Draw only the center portion (the scan box) to the canvas for processing
-        // The scan box is roughly 60% width and 20% height of the screen in the middle
-        const scanWidth = video.videoWidth * 0.7;
-        const scanHeight = video.videoHeight * 0.2;
+        // Optimized scan area: 40% width, 15% height (smaller = faster)
+        const scanWidth = video.videoWidth * 0.4;
+        const scanHeight = video.videoHeight * 0.15;
         const startX = (video.videoWidth - scanWidth) / 2;
         const startY = (video.videoHeight - scanHeight) / 2;
 
         canvas.width = scanWidth;
         canvas.height = scanHeight;
 
-        // Draw the video frame to the canvas (only the relevant crop)
         ctx.drawImage(
             video,
             startX, startY, scanWidth, scanHeight,
             0, 0, scanWidth, scanHeight
         );
 
-        // Pre-process image for better OCR (Essential for Yellow text on Black background)
+        // Try QR code first (very fast, ~50ms)
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
+        const qrCode = jsQR(imageData.data, imageData.width, imageData.height, {
+            inversionAttempts: "dontInvert",
+        });
 
-        for (let i = 0; i < data.length; i += 4) {
-            // Convert to grayscale
-            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-
-            // Invert colors: Tesseract prefers dark text on light background
-            // The product has Light (Yellow) text on Dark (Black) background.
-            // Inverting makes it Dark (Blue/Grey) on Light (White).
-            const value = 255 - avg;
-
-            // Apply high contrast threshold
-            // If original was bright (Yellow) -> avg is high -> value is low (Dark)
-            // If original was dark (Black) -> avg is low -> value is high (Light)
-            // Threshold at 100 seems reasonable for high contrast yellow/black
-            const threshold = value < 100 ? 0 : 255;
-
-            data[i] = threshold;     // R
-            data[i + 1] = threshold; // G
-            data[i + 2] = threshold; // B
-        }
-        ctx.putImageData(imageData, 0, 0);
-
-        try {
-            // Recognize text
-            const { data: { text } } = await workerRef.current.recognize(canvas);
-
-            // Clean and validate text
-            const cleanText = text.replace(/[^A-Z0-9#]/g, '').trim();
-
-            // Allow IDs with or without hash, length check usually roughly 10-20 known from example
-            // Example scanned: #396A0C84B8914D2
-            const match = cleanText.match(/#?[A-F0-9]{10,}/);
-
-            if (match) {
-                const foundId = match[0];
-                console.log("OCR Match:", foundId);
-                onScan(foundId);
+        if (qrCode && qrCode.data) {
+            const scannedData = qrCode.data.trim();
+            if (scannedData && !isDuplicate(scannedData)) {
+                console.log("QR Code detected:", scannedData);
+                setScanMode('qr');
+                onScan(scannedData);
                 stopScanning();
+                return;
             }
-        } catch (err) {
-            // Silent error on individual frame process
         }
+
+        // Fallback to OCR if QR fails (slower, ~300ms)
+        if (workerRef.current) {
+            try {
+                setScanMode('ocr');
+
+                // Preprocess for OCR: invert and threshold
+                const data = imageData.data;
+                for (let i = 0; i < data.length; i += 4) {
+                    const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                    const value = 255 - avg; // Invert
+                    const threshold = value < 100 ? 0 : 255;
+                    data[i] = data[i + 1] = data[i + 2] = threshold;
+                }
+                ctx.putImageData(imageData, 0, 0);
+
+                const { data: { text } } = await workerRef.current.recognize(canvas);
+                const cleanText = text.replace(/[^A-Z0-9#]/g, '').trim();
+                const match = cleanText.match(/#?[A-F0-9]{10,}/);
+
+                if (match && !isDuplicate(match[0])) {
+                    console.log("OCR Match:", match[0]);
+                    onScan(match[0]);
+                    stopScanning();
+                }
+            } catch (err) {
+                // Silent error on individual frame
+            }
+        }
+    };
+
+    const isDuplicate = (scannedData: string): boolean => {
+        const now = Date.now();
+        const DEBOUNCE_MS = 1000; // 1 second cooldown
+
+        if (scannedData === lastScanRef.current && now - lastScanTimeRef.current < DEBOUNCE_MS) {
+            return true;
+        }
+
+        lastScanRef.current = scannedData;
+        lastScanTimeRef.current = now;
+        return false;
     };
 
     const startScanningLoop = () => {
         if (scanIntervalRef.current) clearInterval(scanIntervalRef.current);
-        // Scan every 500ms to balance performance and speed
-        scanIntervalRef.current = setInterval(processFrame, 500);
+        // Faster scan interval: 100ms for QR, falls back to OCR if needed
+        scanIntervalRef.current = setInterval(processFrame, 100);
     };
 
     return (
@@ -181,7 +193,21 @@ export default function WebScanner({ onScan, onClose, isEmbedded = false }: WebS
                 </button>
             )}
 
-            {/* Hidden canvas for processing */}
+            {/* Scan Mode Indicator */}
+            <div className="absolute top-4 left-4 z-20 px-3 py-1 bg-black/60 backdrop-blur-md text-white rounded-full text-xs font-bold flex items-center gap-1">
+                {scanMode === 'qr' ? (
+                    <>
+                        <Zap size={14} className="text-green-400" />
+                        QR Mode
+                    </>
+                ) : (
+                    <>
+                        <Camera size={14} className="text-yellow-400" />
+                        OCR Mode
+                    </>
+                )}
+            </div>
+
             <canvas ref={canvasRef} className="hidden" />
 
             <div className="relative w-full h-full flex flex-col items-center justify-center bg-black">
@@ -198,7 +224,6 @@ export default function WebScanner({ onScan, onClose, isEmbedded = false }: WebS
                     </div>
                 ) : (
                     <>
-                        {/* Video Feed */}
                         <video
                             ref={videoRef}
                             playsInline
@@ -206,28 +231,23 @@ export default function WebScanner({ onScan, onClose, isEmbedded = false }: WebS
                             className="absolute inset-0 w-full h-full object-cover"
                         />
 
-                        {/* Dark Overlay with Transparent Center */}
-                        <div className="absolute inset-0 border-[50px] border-black/60 z-10 pointer-events-none">
-                            {/* This creates a frame, but let's use a better CSS approach for the cut-out */}
-                        </div>
-
-                        {/* Proper Cut-out Overlay */}
+                        {/* Optimized scan area overlay */}
                         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center">
                             <div className="w-full h-1/3 bg-black/90 backdrop-blur-sm"></div>
-                            <div className="w-full h-[150px] flex">
-                                <div className="w-8 bg-black/90 backdrop-blur-sm"></div>
+                            <div className="w-full h-[120px] flex">
+                                <div className="w-[15%] bg-black/90 backdrop-blur-sm"></div>
                                 <div className="flex-1 relative border-2 border-yellow-400 rounded-lg shadow-[0_0_0_9999px_rgba(0,0,0,0.9)]">
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         {initializing && <RefreshCw className="w-8 h-8 text-yellow-400 animate-spin" />}
                                     </div>
-                                    {/* Scan Line Animation */}
-                                    <div className="absolute top-0 left-0 w-full h-0.5 bg-yellow-400 shadow-[0_0_10px_#FACC15] animate-[scan_2s_ease-in-out_infinite] opacity-70"></div>
+                                    {/* Scan line animation */}
+                                    <div className="absolute top-0 left-0 w-full h-0.5 bg-yellow-400 shadow-[0_0_10px_#FACC15] animate-[scan_1.5s_ease-in-out_infinite] opacity-70"></div>
                                 </div>
-                                <div className="w-8 bg-black/90 backdrop-blur-sm"></div>
+                                <div className="w-[15%] bg-black/90 backdrop-blur-sm"></div>
                             </div>
                             <div className="w-full h-1/3 bg-black/90 backdrop-blur-sm flex flex-col items-center pt-8">
                                 <p className="text-white/90 font-bold text-lg font-arabic shadow-black drop-shadow-md">وجه الكاميرا نحو الكود</p>
-                                <p className="text-white/60 text-sm mt-1 font-arabic">#396A... مثال: </p>
+                                <p className="text-white/60 text-sm mt-1 font-arabic">QR أو رقم النص</p>
                             </div>
                         </div>
                     </>
