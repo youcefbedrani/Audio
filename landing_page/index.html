@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Rouisia Voice | حول صوتك إلى لوحة فنية فريدة برقائق ذهبية فاخرة. هدية مخصصة لا تُنسى.">
+    <meta name="description"
+        content="Rouisia Voice | حول صوتك إلى لوحة فنية فريدة برقائق ذهبية فاخرة. هدية مخصصة لا تُنسى.">
     <title>Rouisia Voice | فن تخليد الأصوات الفريدة</title>
-    
+    <link rel="icon" type="image/png" href="assets/icon.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@300;600;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@300;600;800&display=swap"
+        rel="stylesheet">
+
     <style>
         :root {
             --bg-primary: #111822;
@@ -21,40 +25,69 @@
             --border-gold-alpha: rgba(212, 175, 55, 0.15);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background-color: var(--bg-primary); color: var(--text-light); font-family: 'Cairo', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
-        h1, h2, h3 { font-family: 'Amiri', serif; margin-top: 0; }
-        
-        .gold-text { background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; }
-        
-        section { padding: 80px 5%; text-align: center; max-width: 1200px; margin: 0 auto; }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg-primary);
+            color: var(--text-light);
+            font-family: 'Cairo', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Amiri', serif;
+            margin-top: 0;
+        }
+
+        .gold-text {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        section {
+            padding: 80px 5%;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
         /* --- Hero Section --- */
-        .hero { 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             background: radial-gradient(circle at center, #1c2533 0%, #111822 100%);
         }
-        .hero-main-img { 
-            width: 100%; 
-            max-width: 550px; 
-            margin-top: 30px; 
+
+        .hero-main-img {
+            width: 100%;
+            max-width: 550px;
+            margin-top: 30px;
             filter: drop-shadow(0 25px 35px rgba(0, 0, 0, 0.6));
             transition: 0.5s;
         }
-        .cta-button { 
-            background: var(--gold-gradient); 
-            color: #000; 
-            padding: 18px 50px; 
-            border-radius: 50px; 
-            font-size: 1.2rem; 
-            font-weight: 800; 
-            text-decoration: none; 
-            margin-top: 40px; 
-            box-shadow: 0 10px 30px rgba(170, 119, 28, 0.4); 
+
+        .cta-button {
+            background: var(--gold-gradient);
+            color: #000;
+            padding: 18px 50px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            text-decoration: none;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(170, 119, 28, 0.4);
         }
 
         /* --- قسم نقطة القوة: لحظة الكشف --- */
@@ -66,6 +99,7 @@
             position: relative;
             z-index: 10;
         }
+
         .reveal-container {
             display: flex;
             align-items: center;
@@ -74,85 +108,247 @@
             flex-wrap: wrap;
             text-align: right;
         }
-        .reveal-text { flex: 1; min-width: 300px; }
-        .reveal-text h2 { font-size: 2.2rem; margin-bottom: 15px; }
-        .reveal-text p { font-size: 1.2rem; line-height: 1.7; color: #ddd; }
-        .reveal-video-placeholder { 
-            flex: 1; 
-            min-width: 300px; 
-            max-width: 500px; 
-            border-radius: 20px; 
-            overflow: hidden; 
+
+        .reveal-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .reveal-text h2 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+
+        .reveal-text p {
+            font-size: 1.2rem;
+            line-height: 1.7;
+            color: #ddd;
+        }
+
+        .reveal-video-placeholder {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+            border-radius: 20px;
+            overflow: hidden;
             box-shadow: 0 0 30px var(--gold-main);
             border: 2px solid var(--gold-main);
         }
-        .reveal-video-placeholder img { width: 100%; display: block; }
+
+        .reveal-video-placeholder img {
+            width: 100%;
+            display: block;
+        }
 
         /* --- قسم الشرح: كيف تعمل --- */
-        .how-it-works { background-color: #0d121b; border-radius: 40px; margin: 40px auto; }
-        .steps-container { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 40px; margin-top: 40px; }
-        .step-item { flex: 1; min-width: 250px; }
-        .step-icon { width: 70px; height: 70px; background: var(--gold-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.8rem; color: #000; }
+        .how-it-works {
+            background-color: #0d121b;
+            border-radius: 40px;
+            margin: 40px auto;
+        }
+
+        .steps-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .step-item {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .step-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gold-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.8rem;
+            color: #000;
+        }
 
         /* --- زوايا التسويق العاطفي --- */
-        .marketing-angle { 
-            display: flex; 
-            align-items: center; 
-            gap: 50px; 
-            padding: 80px 0; 
+        .marketing-angle {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            padding: 80px 0;
             border-top: 1px solid var(--border-gold-alpha);
             text-align: right;
         }
-        .marketing-angle:nth-child(even) { flex-direction: row-reverse; }
-        .angle-content { flex: 1; }
-        .angle-content h2 { font-size: 2.5rem; color: var(--gold-main); }
-        .angle-content p { font-size: 1.1rem; line-height: 1.8; opacity: 0.8; }
-        .angle-image { flex: 1; }
-        .angle-image img { 
-            width: 100%; 
-            height: 350px; 
-            object-fit: cover; 
-            border-radius: 30px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+
+        .marketing-angle:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .angle-content {
+            flex: 1;
+        }
+
+        .angle-content h2 {
+            font-size: 2.5rem;
+            color: var(--gold-main);
+        }
+
+        .angle-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            opacity: 0.8;
+        }
+
+        .angle-image {
+            flex: 1;
+        }
+
+        .angle-image img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
             border: 1px solid var(--border-gold-alpha);
         }
 
         /* --- مختبر التخصيص (Checkout) --- */
-        .lab-container { 
-            background-color: #ffffff; 
-            color: var(--text-dark); 
-            padding: 45px; 
-            border-radius: 35px; 
-            max-width: 900px; 
-            margin: 60px auto; 
+        .lab-container {
+            background-color: #ffffff;
+            color: var(--text-dark);
+            padding: 45px;
+            border-radius: 35px;
+            max-width: 900px;
+            margin: 60px auto;
             text-align: right;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
         }
-        .option-group-title { font-weight: 800; border-right: 5px solid var(--gold-main); padding-right: 15px; margin: 30px 0 15px; display: block; }
-        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; }
-        .option-item { border: 2px solid #eee; border-radius: 20px; padding: 15px; cursor: pointer; text-align: center; transition: 0.3s; background: #fff; }
-        .option-item.active { border-color: var(--gold-main); background: #fffdf5; box-shadow: 0 10px 20px rgba(212, 175, 55, 0.1); }
-        .option-item img { width: 100%; height: auto; object-fit: contain; border-radius: 12px; margin-bottom: 10px; }
-        
-        .input-field { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #ddd; font-family: 'Cairo'; }
-        .upload-area { display: block; border: 2px dashed var(--gold-main); padding: 30px; border-radius: 20px; text-align: center; cursor: pointer; margin: 20px 0; background: #fffcf5; }
-        .order-btn { background: var(--gold-gradient); color: #000; width: 100%; padding: 20px; border: none; border-radius: 15px; font-size: 1.4rem; font-weight: 800; cursor: pointer; }
+
+        .option-group-title {
+            font-weight: 800;
+            border-right: 5px solid var(--gold-main);
+            padding-right: 15px;
+            margin: 30px 0 15px;
+            display: block;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+        }
+
+        .option-item {
+            border: 2px solid #eee;
+            border-radius: 20px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.3s;
+            background: #fff;
+        }
+
+        .option-item.active {
+            border-color: var(--gold-main);
+            background: #fffdf5;
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.1);
+        }
+
+        .option-item img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-family: 'Cairo';
+        }
+
+        .upload-area {
+            display: block;
+            border: 2px dashed var(--gold-main);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            margin: 20px 0;
+            background: #fffcf5;
+        }
+
+        .order-btn {
+            background: var(--gold-gradient);
+            color: #000;
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
 
         /* --- الأسئلة الشائعة --- */
-        .faq-item { background: var(--card-bg); margin-bottom: 10px; border-radius: 12px; text-align: right; }
-        .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; }
-        .faq-answer { padding: 0 20px 20px; display: none; color: #ccc; }
+        .faq-item {
+            background: var(--card-bg);
+            margin-bottom: 10px;
+            border-radius: 12px;
+            text-align: right;
+        }
 
-        footer { padding: 40px; opacity: 0.6; font-size: 0.9rem; }
+        .faq-question {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+
+        .faq-answer {
+            padding: 0 20px 20px;
+            display: none;
+            color: #ccc;
+        }
+
+        footer {
+            padding: 40px;
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
 
         @media (max-width: 768px) {
-            .marketing-angle, .marketing-angle:nth-child(even) { flex-direction: column; text-align: center; }
-            .reveal-container { flex-direction: column; text-align: center; }
-            .reveal-text { text-align: center; }
-            .options-grid { grid-template-columns: 1fr; }
+
+            .marketing-angle,
+            .marketing-angle:nth-child(even) {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .reveal-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .reveal-text {
+                text-align: center;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <section class="hero">
@@ -166,7 +362,9 @@
         <div class="reveal-container">
             <div class="reveal-text">
                 <h2 class="gold-text">أنت من يمنحها الحياة!</h2>
-                <p>السر ليس فقط في الجمال، بل في لحظة الكشف. صاحب الهدية هو من يقوم **بنزع الرقائق الذهبية** الزائدة بيده ليكتشف بصمة صوته الفريدة المختبئة بالأسفل. تجربة شعورية لا تُنسى تجعل من الهدية ذكرى محفورة في القلب.</p>
+                <p>السر ليس فقط في الجمال، بل في لحظة الكشف. صاحب الهدية هو من يقوم **بنزع الرقائق الذهبية** الزائدة
+                    بيده ليكتشف بصمة صوته الفريدة المختبئة بالأسفل. تجربة شعورية لا تُنسى تجعل من الهدية ذكرى محفورة في
+                    القلب.</p>
             </div>
             <div class="reveal-video-placeholder">
                 <img src="assets/reveal-moment.jpg" alt="لحظة نزع الرقائق الذهبية">
@@ -199,7 +397,8 @@
         <div class="marketing-angle">
             <div class="angle-content">
                 <h2>ضحكة أمي.. حياة</h2>
-                <p>لأن ضحكتها هي أجمل نغمة في الكون، قمنا بتخليد تردداتها برقائق ذهبية فاخرة. عندما تشتاق لسماعها، فقط وجّه هاتفك نحو اللوحة لتمتلئ الغرفة ببهجتها الصادقة.</p>
+                <p>لأن ضحكتها هي أجمل نغمة في الكون، قمنا بتخليد تردداتها برقائق ذهبية فاخرة. عندما تشتاق لسماعها، فقط
+                    وجّه هاتفك نحو اللوحة لتمتلئ الغرفة ببهجتها الصادقة.</p>
             </div>
             <div class="angle-image">
                 <img src="assets/story-mother.jpg" alt="ضحكة أمي">
@@ -209,7 +408,8 @@
         <div class="marketing-angle">
             <div class="angle-content">
                 <h2>صوتٌ يطوي المسافات</h2>
-                <p>لأن الغربة مُرة، وصوت من نحب هو الأمان.. وثّق رسالة من شخص بعيد أو ذكرى من غائب لا تغادر بالك. قطعة فنية تجعلك تشعر أنهم معك في نفس الغرفة، بلمسات ذهبية تليق بغلاوة أصحابها.</p>
+                <p>لأن الغربة مُرة، وصوت من نحب هو الأمان.. وثّق رسالة من شخص بعيد أو ذكرى من غائب لا تغادر بالك. قطعة
+                    فنية تجعلك تشعر أنهم معك في نفس الغرفة، بلمسات ذهبية تليق بغلاوة أصحابها.</p>
             </div>
             <div class="angle-image">
                 <img src="assets/story-distance.jpg" alt="صوت يطوي المسافات">
@@ -219,7 +419,8 @@
         <div class="marketing-angle">
             <div class="angle-content">
                 <h2>وعدٌ مخلد بالبريق</h2>
-                <p>كلمة "أحبك" بلمعان ذهبي جذاب. حوّل وعودك لشريك حياتك إلى لوحة فاخرة تعانق جدران منزلكم، لتكون تذكيراً دائماً بأن صوت الحب لا ينتهي أبداً.</p>
+                <p>كلمة "أحبك" بلمعان ذهبي جذاب. حوّل وعودك لشريك حياتك إلى لوحة فاخرة تعانق جدران منزلكم، لتكون تذكيراً
+                    دائماً بأن صوت الحب لا ينتهي أبداً.</p>
             </div>
             <div class="angle-image">
                 <img src="assets/story-love.jpg" alt="رسالة حب ذهبية">
@@ -230,7 +431,7 @@
     <section id="customization-section">
         <div class="lab-container">
             <h2 style="text-align: center; margin-bottom: 30px;">صمم تحفتك الخاصة</h2>
-            
+
             <span class="option-group-title">1. اختر نوع الاطار والتغليف</span>
             <div class="options-grid">
                 <div class="option-item active" onclick="sel(this)">
@@ -253,7 +454,7 @@
             <span class="option-group-title">2. معلومات الشحن</span>
             <input type="text" class="input-field" placeholder="الاسم الكامل">
             <input type="tel" class="input-field" placeholder="رقم الهاتف">
-            
+
             <span class="option-group-title">3. ارفع البصمة الصوتية</span>
             <label class="upload-area">
                 <strong id="status">اضغط هنا لرفع الملف الصوتي</strong>
@@ -269,11 +470,13 @@
         <h2 class="gold-text">الأسئلة الشائعة</h2>
         <div class="faq-item">
             <div class="faq-question" onclick="toggleFaq(this)">هل الرقائق المستخدمة ذهب حقيقي؟ <span>+</span></div>
-            <div class="faq-answer">نحن نستخدم رقائق معدنية فاخرة بلون ذهبي فائق اللمعان مخصصة للأعمال الفنية، لضمان مظهر فخم وسعر مناسب للجميع.</div>
+            <div class="faq-answer">نحن نستخدم رقائق معدنية فاخرة بلون ذهبي فائق اللمعان مخصصة للأعمال الفنية، لضمان
+                مظهر فخم وسعر مناسب للجميع.</div>
         </div>
         <div class="faq-item">
             <div class="faq-question" onclick="toggleFaq(this)">كيف أسمع الصوت من اللوحة؟ <span>+</span></div>
-            <div class="faq-answer">كل لوحة تأتي مزودة بكود ذكي، بمجرد توجيه كاميرا الهاتف إليه، يبدأ المقطع الصوتي الذي اخترته بالعمل.</div>
+            <div class="faq-answer">كل لوحة تأتي مزودة بكود ذكي، بمجرد توجيه كاميرا الهاتف إليه، يبدأ المقطع الصوتي الذي
+                اخترته بالعمل.</div>
         </div>
     </section>
 
@@ -290,9 +493,10 @@
             const ans = el.nextElementSibling;
             ans.style.display = ans.style.display === "block" ? "none" : "block";
         }
-        document.getElementById('audio-file').addEventListener('change', function() {
-            if(this.files[0]) document.getElementById('status').innerText = "تم رفع الملف بنجاح ✅";
+        document.getElementById('audio-file').addEventListener('change', function () {
+            if (this.files[0]) document.getElementById('status').innerText = "تم رفع الملف بنجاح ✅";
         });
     </script>
 </body>
+
 </html>
