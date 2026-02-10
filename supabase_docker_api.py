@@ -886,10 +886,10 @@ def save_order_to_supabase(order_data):
         traceback.print_exc()
         return None
 
-def get_orders_from_supabase(search=None, status=None):
-    """Get orders from Supabase database with filtering"""
+def get_orders_from_supabase(search=None, status=None, page=1, limit=30):
+    """Get orders from Supabase database with filtering and pagination"""
     try:
-        print(f"📥 Fetching orders from Supabase (search={search}, status={status})...")
+        print(f"📥 Fetching orders from Supabase (search={search}, status={status}, page={page})...")
         url = f"{SUPABASE_URL}/rest/v1/api_order"
         
         params = {
@@ -906,20 +906,114 @@ def get_orders_from_supabase(search=None, status=None):
             
         headers = get_supabase_headers()
         
+        # Add pagination headers
+        start = (page - 1) * limit
+        end = start + limit - 1
+        headers["Range"] = f"{start}-{end}"
+        headers["Prefer"] = "count=exact"
+        
         response = requests.get(url, headers=headers, params=params)
         
         print(f"   Response status: {response.status_code}")
         
-        if response.status_code == 200:
+        if response.status_code == 200 or response.status_code == 206:
             orders_list = response.json()
-            print(f"✅ Retrieved {len(orders_list)} orders from Supabase")
-            return orders_list
+            
+            # Get total count from header
+            content_range = response.headers.get('Content-Range', '')
+            total_count = 0
+            if '/' in content_range:
+                try:
+                    total_count = int(content_range.split('/')[1])
+                except:
+                    total_count = len(orders_list)
+                    
+            print(f"✅ Retrieved {len(orders_list)} orders from Supabase (Total: {total_count})")
+            return {"orders": orders_list, "total": total_count}
         else:
             print(f"❌ Supabase error: {response.status_code} - {response.text}")
             return None
     except Exception as e:
         print(f"❌ Error getting from Supabase: {e}")
         return None
+
+@app.route('/api/admin/stats/', methods=['GET'])
+def get_admin_stats():
+    """Get aggregated statistics for admin dashboard"""
+    try:
+        print("📊 Fetching admin stats...")
+        
+        # 1. Try Supabase first
+        if SUPABASE_URL:
+            url = f"{SUPABASE_URL}/rest/v1/api_order"
+            headers = get_supabase_headers()
+            # Select only necessary columns to be lightweight
+            params = {
+                "select": "status,total_amount,confirmation_agent"
+            }
+            
+            response = requests.get(url, headers=headers, params=params)
+            
+            if response.status_code == 200:
+                orders_data = response.json()
+                print(f"✅ Loaded {len(orders_data)} orders for stats")
+                
+                # Calculate stats
+                total_orders = len(orders_data)
+                confirmed_orders = 0
+                shipped_orders = 0
+                total_revenue = 0
+                agent_stats = {}
+                
+                for o in orders_data:
+                    status = o.get('status')
+                    agent = o.get('confirmation_agent')
+                    amount = o.get('total_amount') or 0
+                    
+                    if status == 'confirmed':
+                        confirmed_orders += 1
+                        if agent:
+                            agent_stats[agent] = agent_stats.get(agent, 0) + 1
+                            
+                    if status == 'shipped':
+                        shipped_orders += 1
+                        try:
+                            total_revenue += float(amount)
+                        except:
+                            pass
+                            
+                return jsonify({
+                    "total_orders": total_orders,
+                    "confirmed_orders": confirmed_orders,
+                    "shipped_orders": shipped_orders,
+                    "total_revenue": total_revenue,
+                    "agent_stats": agent_stats
+                })
+        
+        # Fallback to local orders if Supabase fails or not configured
+        global orders
+        total_orders = len(orders)
+        confirmed_orders = len([o for o in orders if o.get('status') == 'confirmed'])
+        shipped_orders = [o for o in orders if o.get('status') == 'shipped']
+        total_revenue = sum([float(o.get('total_amount') or 0) for o in shipped_orders])
+        
+        agent_stats = {}
+        for o in orders:
+            if o.get('status') == 'confirmed' and o.get('confirmation_agent'):
+                agent = o.get('confirmation_agent')
+                agent_stats[agent] = agent_stats.get(agent, 0) + 1
+        
+        return jsonify({
+            "total_orders": total_orders,
+            "confirmed_orders": confirmed_orders,
+            "shipped_orders": len(shipped_orders),
+            "total_revenue": total_revenue,
+            "agent_stats": agent_stats
+        })
+        
+    except Exception as e:
+        print(f"❌ Error fetching stats: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/frames/', methods=['GET'])
 def get_frames():
@@ -947,20 +1041,26 @@ def handle_orders():
         offset = (page - 1) * limit
         
         # Get filtered orders from Supabase
-        supabase_orders = get_orders_from_supabase(search=search, status=status_filter)
+        supabase_result = get_orders_from_supabase(search=search, status=status_filter, page=page, limit=limit)
         
-        # Merge with local orders (apply same filtering locally)
+        supabase_orders = []
+        total_supabase = 0
+        
+        if supabase_result:
+            supabase_orders = supabase_result.get("orders", [])
+            total_supabase = supabase_result.get("total", 0)
+        else:
+             print("⚠️ Supabase connection failed or returned error.")
+        
+        # Merge with local orders (Simple fallback: just prepend local if not in page)
+        # Note: Proper pagination across two data sources is complex. 
+        # We prioritize Supabase. Local orders are added to the list but pagination count uses Supabase count as base.
+        
         global orders
-        all_orders = []
+        all_orders = list(supabase_orders)
         
-        # Check for Supabase failure
-        if supabase_orders is None:
-            print("⚠️ Supabase connection failed.")
-            if not orders: # If no local fallback data, return error to keep frontend state
-                return jsonify({"error": "Database unavailable"}), 503
-            supabase_orders = [] # Fallback to local only if we have some data
-        
-        # Local filtering
+        # Add local orders that match filter
+        local_matches = []
         for o in orders:
             matches_status = not status_filter or o.get('status') == status_filter
             matches_search = not search or any(
@@ -968,22 +1068,27 @@ def handle_orders():
                 for field in ['customer_name', 'customer_phone', 'scan_id']
             )
             if matches_status and matches_search:
-                all_orders.append(o)
-        
-        # Add supabase orders that aren't already in local orders (by ID)
+                local_matches.append(o)
+
+        # Deduplicate local orders
         existing_ids = {o.get('id') for o in all_orders}
-        for so in supabase_orders:
-            if so.get('id') not in existing_ids:
-                all_orders.append(so)
+        for local_o in local_matches:
+             # Only add if it has an ID and that ID isn't in the supabase page 
+             # (This is imperfect but prevents obvious dupes on current page)
+             if local_o.get('id') not in existing_ids:
+                 all_orders.append(local_o)
         
-        # Sort by creation date (newest first)
+        # Sort combined list
         all_orders.sort(key=lambda x: x.get('created_at', ''), reverse=True)
         
-        total = len(all_orders)
+        # Adjust total
+        total = max(total_supabase, len(all_orders))
+
+        # Since we already paginated Supabase, all_orders is roughly Page N.
+        # However, adding local files might make it larger than limit.
+        # We enforce limit on the result
+        paginated_orders = all_orders[:limit]
         
-        start = offset
-        end = offset + limit
-        paginated_orders = all_orders[start:end]
         return jsonify({
             "orders": paginated_orders,
             "total": total,

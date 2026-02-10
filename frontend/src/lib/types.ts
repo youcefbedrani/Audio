@@ -37,6 +37,14 @@ export interface Order {
     created_at?: string;
 }
 
+export interface AdminStatsData {
+    total_orders: number;
+    confirmed_orders: number;
+    shipped_orders: number;
+    total_revenue: number;
+    agent_stats: Record<string, number>;
+}
+
 export const WILAYAS = [
     "Adrar", "Chlef", "Laghouat", "Oum El Bouaghi", "Batna", "Béjaïa", "Biskra", "Béchar",
     "Blida", "Bouira", "Tamanrasset", "Tébessa", "Tlemcen", "Tiaret", "Tizi Ouzou", "Algiers",

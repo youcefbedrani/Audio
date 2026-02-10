@@ -185,4 +185,16 @@ export const updateSettings = async (settings: Settings) => {
     console.error("Error updating settings:", error);
     throw error;
   }
+
+
+};
+
+export const getAdminStats = async (): Promise<import("./types").AdminStatsData> => {
+  try {
+    const response = await axios.get(`${API_URL}/admin/stats/`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching admin stats:", error);
+    throw error;
+  }
 };

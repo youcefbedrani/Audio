@@ -43,6 +43,13 @@ h3 {
   display: inline-block;
 }
 
+/* Make all input placeholders black */
+input::placeholder,
+textarea::placeholder {
+  color: #000000 !important;
+  opacity: 1;
+}
+
 /* Existing RTL Support & Utilities */
 .rtl {
   direction: rtl;
