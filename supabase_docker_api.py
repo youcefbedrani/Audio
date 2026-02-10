@@ -944,6 +944,13 @@ STATS_CACHE = {
 }
 CACHE_TIMEOUT = 300  # 5 minutes
 
+def invalidate_stats_cache():
+    """Invalidate the stats cache to force refresh on next request"""
+    global STATS_CACHE
+    STATS_CACHE["data"] = None
+    STATS_CACHE["timestamp"] = 0
+    print("🔄 Stats cache invalidated")
+
 @app.route('/api/admin/stats/', methods=['GET'])
 def get_admin_stats():
     """Get aggregated statistics for admin dashboard with caching"""
@@ -1334,6 +1341,7 @@ def update_order_status(order_id):
         
         if response.status_code in [200, 204]:
             print(f"✅ Order {order_id} updated successfully")
+            invalidate_stats_cache()  # Invalidate cache when order is updated
             return jsonify({"success": True, "message": "Order updated successfully"})
         else:
             print(f"❌ Failed to update order {order_id}: {response.text}")
@@ -1357,6 +1365,7 @@ def update_order_status(order_id):
             
             if updated:
                 save_orders_locally()
+                invalidate_stats_cache()  # Invalidate cache for local updates too
                 print(f"✅ FALLBACK SUCCESS: Order updated locally")
                 return jsonify({"success": True, "message": "Order updated locally (cloud unavailable)"})
             else:
@@ -1395,6 +1404,7 @@ def update_or_delete_order(order_id):
             
             if response.status_code in [200, 204]:
                 print(f"✅ Order {order_id} deleted successfully")
+                invalidate_stats_cache()  # Invalidate cache when order is deleted
                 return jsonify({"success": True, "message": "Order deleted successfully"})
             else:
                 print(f"❌ Failed to delete order {order_id}: {response.text}")
