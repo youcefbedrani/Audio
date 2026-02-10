@@ -68,14 +68,14 @@ export default function AdminStats({ stats }: AdminStatsProps) {
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <Users className="w-5 h-5 text-gray-500" />
-                    أداء فريق العمل
+                    أداء فريق العمل (الطلبات المؤكدة)
                 </h3>
                 <div className="overflow-x-auto">
                     <table className="w-full text-right">
                         <thead className="bg-gray-50 text-gray-600 text-sm font-semibold border-b border-gray-100">
                             <tr>
                                 <th className="py-3 px-4">الموظف</th>
-                                <th className="py-3 px-4">عدد الطلبات</th>
+                                <th className="py-3 px-4">عدد الطلبات المؤكدة</th>
                                 <th className="py-3 px-4">نسبة الأداء</th>
                             </tr>
                         </thead>
@@ -87,7 +87,7 @@ export default function AdminStats({ stats }: AdminStatsProps) {
                                         <td className="py-3 px-4 font-medium text-gray-900">{agent}</td>
                                         <td className="py-3 px-4 text-green-600 font-bold">{count}</td>
                                         <td className="py-3 px-4 text-gray-500">
-                                            {Math.round((count / (totalOrders || 1)) * 100)}%
+                                            {Math.round((count / (confirmedOrders || 1)) * 100)}%
                                         </td>
                                     </tr>
                                 ))}
