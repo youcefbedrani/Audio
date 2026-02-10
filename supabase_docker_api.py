@@ -1296,6 +1296,7 @@ def handle_orders():
 
             print(f"✅ Order saved to Supabase successfully!")
             print(f"✅ Order ID: {final_order_id}")
+            invalidate_stats_cache()  # Invalidate cache when new order is created
             
             return jsonify({
                 "success": True,
