@@ -22,7 +22,7 @@ export default function AdminPage() {
 
   // Pagination
   const [page, setPage] = useState(1);
-  const [limit] = useState(1000);
+  const [limit] = useState(50);
   const [totalPages, setTotalPages] = useState(1);
   const [totalOrders, setTotalOrders] = useState(0);
 

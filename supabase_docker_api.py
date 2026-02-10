@@ -937,11 +937,26 @@ def get_orders_from_supabase(search=None, status=None, page=1, limit=30):
         print(f"❌ Error getting from Supabase: {e}")
         return None
 
+# Caching for stats
+STATS_CACHE = {
+    "data": None,
+    "timestamp": 0
+}
+CACHE_TIMEOUT = 300  # 5 minutes
+
 @app.route('/api/admin/stats/', methods=['GET'])
 def get_admin_stats():
-    """Get aggregated statistics for admin dashboard"""
+    """Get aggregated statistics for admin dashboard with caching"""
     try:
-        print("📊 Fetching admin stats...")
+        current_time = datetime.now().timestamp()
+        refresh = request.args.get('refresh') == 'true'
+        
+        # Return cached if valid and not forced refresh
+        if not refresh and STATS_CACHE["data"] and (current_time - STATS_CACHE["timestamp"] < CACHE_TIMEOUT):
+            print("⚡ Returning cached admin stats")
+            return jsonify(STATS_CACHE["data"])
+
+        print("📊 Fetching admin stats from source...")
         
         # 1. Try Supabase first
         if SUPABASE_URL:
@@ -973,43 +988,53 @@ def get_admin_stats():
                     if status == 'confirmed':
                         confirmed_orders += 1
                         if agent:
-                            agent_stats[agent] = agent_stats.get(agent, 0) + 1
+                            # Normalize agent name to account for casing/spacing if needed
+                            agent_key = agent.strip()
+                            agent_stats[agent_key] = agent_stats.get(agent_key, 0) + 1
                             
                     if status == 'shipped':
                         shipped_orders += 1
                         try:
-                            total_revenue += float(amount)
+                            total_revenue += float(str(amount).replace(',', ''))
                         except:
                             pass
-                            
-                return jsonify({
+                
+                stats_data = {
                     "total_orders": total_orders,
                     "confirmed_orders": confirmed_orders,
                     "shipped_orders": shipped_orders,
                     "total_revenue": total_revenue,
                     "agent_stats": agent_stats
-                })
+                }
+                
+                # Update cache
+                STATS_CACHE["data"] = stats_data
+                STATS_CACHE["timestamp"] = current_time
+                
+                return jsonify(stats_data)
         
         # Fallback to local orders if Supabase fails or not configured
         global orders
         total_orders = len(orders)
         confirmed_orders = len([o for o in orders if o.get('status') == 'confirmed'])
         shipped_orders = [o for o in orders if o.get('status') == 'shipped']
-        total_revenue = sum([float(o.get('total_amount') or 0) for o in shipped_orders])
+        total_revenue = sum([float(str(o.get('total_amount') or 0).replace(',', '')) for o in shipped_orders])
         
         agent_stats = {}
         for o in orders:
             if o.get('status') == 'confirmed' and o.get('confirmation_agent'):
-                agent = o.get('confirmation_agent')
+                agent = o.get('confirmation_agent').strip()
                 agent_stats[agent] = agent_stats.get(agent, 0) + 1
         
-        return jsonify({
+        stats_data = {
             "total_orders": total_orders,
             "confirmed_orders": confirmed_orders,
             "shipped_orders": len(shipped_orders),
             "total_revenue": total_revenue,
             "agent_stats": agent_stats
-        })
+        }
+        
+        return jsonify(stats_data)
         
     except Exception as e:
         print(f"❌ Error fetching stats: {e}")
