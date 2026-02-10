@@ -993,12 +993,13 @@ def get_admin_stats():
                         agent = o.get('confirmation_agent')
                         amount = o.get('total_amount') or 0
                         
+                        # Count all orders assigned to an agent (not just confirmed)
+                        if agent:
+                            agent_key = agent.strip()
+                            agent_stats[agent_key] = agent_stats.get(agent_key, 0) + 1
+                        
                         if status == 'confirmed':
                             confirmed_orders += 1
-                            if agent:
-                                # Normalize agent name to account for casing/spacing if needed
-                                agent_key = agent.strip()
-                                agent_stats[agent_key] = agent_stats.get(agent_key, 0) + 1
                                 
                         if status == 'shipped':
                             shipped_orders += 1
@@ -1034,7 +1035,7 @@ def get_admin_stats():
         
         agent_stats = {}
         for o in orders:
-            if o.get('status') == 'confirmed' and o.get('confirmation_agent'):
+            if o.get('confirmation_agent'):
                 agent = o.get('confirmation_agent').strip()
                 agent_stats[agent] = agent_stats.get(agent, 0) + 1
         
