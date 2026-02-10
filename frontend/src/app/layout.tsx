@@ -16,7 +16,7 @@ const amiri = Amiri({
 });
 
 export const metadata: Metadata = {
-  title: "إطار الصوت الفني",
+  title: "Rouisia Voice | فن تخليد الأصوات الفريدة",
   description: "أنشئ إطارات فنية شخصية مع رموز QR التي ترتبط برسائلك الصوتية",
   manifest: "/manifest.json",
   icons: {
