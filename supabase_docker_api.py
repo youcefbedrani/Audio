@@ -967,58 +967,63 @@ def get_admin_stats():
         
         # 1. Try Supabase first
         if SUPABASE_URL:
-            url = f"{SUPABASE_URL}/rest/v1/api_order"
-            headers = get_supabase_headers()
-            # Select only necessary columns to be lightweight
-            params = {
-                "select": "status,total_amount,confirmation_agent"
-            }
-            
-            response = requests.get(url, headers=headers, params=params)
-            
-            if response.status_code == 200:
-                orders_data = response.json()
-                print(f"✅ Loaded {len(orders_data)} orders for stats")
-                
-                # Calculate stats
-                total_orders = len(orders_data)
-                confirmed_orders = 0
-                shipped_orders = 0
-                total_revenue = 0
-                agent_stats = {}
-                
-                for o in orders_data:
-                    status = o.get('status')
-                    agent = o.get('confirmation_agent')
-                    amount = o.get('total_amount') or 0
-                    
-                    if status == 'confirmed':
-                        confirmed_orders += 1
-                        if agent:
-                            # Normalize agent name to account for casing/spacing if needed
-                            agent_key = agent.strip()
-                            agent_stats[agent_key] = agent_stats.get(agent_key, 0) + 1
-                            
-                    if status == 'shipped':
-                        shipped_orders += 1
-                        try:
-                            total_revenue += float(str(amount).replace(',', ''))
-                        except:
-                            pass
-                
-                stats_data = {
-                    "total_orders": total_orders,
-                    "confirmed_orders": confirmed_orders,
-                    "shipped_orders": shipped_orders,
-                    "total_revenue": total_revenue,
-                    "agent_stats": agent_stats
+            try:
+                url = f"{SUPABASE_URL}/rest/v1/api_order"
+                headers = get_supabase_headers()
+                # Select only necessary columns to be lightweight
+                params = {
+                    "select": "status,total_amount,confirmation_agent"
                 }
                 
-                # Update cache
-                STATS_CACHE["data"] = stats_data
-                STATS_CACHE["timestamp"] = current_time
+                response = requests.get(url, headers=headers, params=params, timeout=5)
                 
-                return jsonify(stats_data)
+                if response.status_code == 200:
+                    orders_data = response.json()
+                    print(f"✅ Loaded {len(orders_data)} orders for stats")
+                    
+                    # Calculate stats
+                    total_orders = len(orders_data)
+                    confirmed_orders = 0
+                    shipped_orders = 0
+                    total_revenue = 0
+                    agent_stats = {}
+                    
+                    for o in orders_data:
+                        status = o.get('status')
+                        agent = o.get('confirmation_agent')
+                        amount = o.get('total_amount') or 0
+                        
+                        if status == 'confirmed':
+                            confirmed_orders += 1
+                            if agent:
+                                # Normalize agent name to account for casing/spacing if needed
+                                agent_key = agent.strip()
+                                agent_stats[agent_key] = agent_stats.get(agent_key, 0) + 1
+                                
+                        if status == 'shipped':
+                            shipped_orders += 1
+                            try:
+                                total_revenue += float(str(amount).replace(',', ''))
+                            except:
+                                pass
+                    
+                    stats_data = {
+                        "total_orders": total_orders,
+                        "confirmed_orders": confirmed_orders,
+                        "shipped_orders": shipped_orders,
+                        "total_revenue": total_revenue,
+                        "agent_stats": agent_stats
+                    }
+                    
+                    # Update cache
+                    STATS_CACHE["data"] = stats_data
+                    STATS_CACHE["timestamp"] = current_time
+                    
+                    return jsonify(stats_data)
+            except Exception as supabase_error:
+                print(f"⚠️ Supabase stats fetch failed: {supabase_error}")
+                # Fall through to local fallback
+
         
         # Fallback to local orders if Supabase fails or not configured
         global orders
