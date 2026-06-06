@@ -180,6 +180,40 @@ def save_agents_locally():
 # Initial load for agents
 load_agents_locally()
 
+# Admin credentials persistence
+admin_credentials = [
+    {
+        "email": "admin@gmail.com",
+        "password": "admin",
+        "role": "admin",
+        "agent_name": ""
+    }
+]
+CREDENTIALS_FILE = "admin_credentials.json"
+
+def load_credentials_locally():
+    global admin_credentials
+    if os.path.exists(CREDENTIALS_FILE):
+        try:
+            with open(CREDENTIALS_FILE, "r") as f:
+                admin_credentials = json.load(f)
+            print(f"✅ Loaded {len(admin_credentials)} credentials from local persistence")
+        except Exception as e:
+            print(f"⚠️ Error loading credentials: {e}")
+    else:
+        # Save default if not exists
+        save_credentials_locally()
+
+def save_credentials_locally():
+    try:
+        with open(CREDENTIALS_FILE, "w") as f:
+            json.dump(admin_credentials, f, indent=2)
+        print(f"✅ Saved credentials to local persistence")
+    except Exception as e:
+        print(f"⚠️ Error saving credentials: {e}")
+
+load_credentials_locally()
+
 def is_supabase_reachable():
     """Check if Supabase domain is resolvable to avoid crashing on DNS errors"""
     if not SUPABASE_URL:
@@ -427,9 +461,7 @@ def upload_waveform_to_supabase_storage(image_bytes: bytes, filename: str) -> st
             local_path = save_file_locally(image_bytes, filename, subfolder="waveforms")
             if local_path:
                 print(f"✅ Saved waveform locally: {local_path}")
-                # Construct local URL
-                local_url = f"/uploads/waveforms/{filename}"
-                return local_url
+                return local_path
         except Exception as local_err:
             print(f"❌ Local fallback failed: {local_err}")
 
@@ -761,7 +793,7 @@ def generate_fallback_waveform(scan_id, frame_id=None):
                     waveform_url = cloudinary_waveform_url
                     print(f"   ⚠️  NOTE: Using Cloudinary instead of Supabase Storage")
                 else:
-                    waveform_url = f"http://localhost:8001/uploads/waveforms/{waveform_filename}"
+                    waveform_url = f"/api/uploads/waveforms/{waveform_filename}"
                     print(f"   ⚠️  CRITICAL: Waveform NOT in Supabase Storage!")
         
         # Create waveform data for storage (fallback waveform - no audio URL available)
@@ -886,10 +918,10 @@ def save_order_to_supabase(order_data):
         traceback.print_exc()
         return None
 
-def get_orders_from_supabase(search=None, status=None, page=1, limit=30):
+def get_orders_from_supabase(search=None, status=None, agent=None, page=1, limit=30):
     """Get orders from Supabase database with filtering and pagination"""
     try:
-        print(f"📥 Fetching orders from Supabase (search={search}, status={status}, page={page})...")
+        print(f"📥 Fetching orders from Supabase (search={search}, status={status}, agent={agent}, page={page})...")
         url = f"{SUPABASE_URL}/rest/v1/api_order"
         
         params = {
@@ -899,6 +931,9 @@ def get_orders_from_supabase(search=None, status=None, page=1, limit=30):
         
         if status:
             params["status"] = f"eq.{status}"
+            
+        if agent:
+            params["confirmation_agent"] = f"eq.{agent}"
             
         if search:
             # Supabase or-logic: (col1.ilike.*search*,col2.ilike.*search*)
@@ -957,13 +992,14 @@ def get_admin_stats():
     try:
         current_time = datetime.now().timestamp()
         refresh = request.args.get('refresh') == 'true'
+        agent_filter = request.args.get('agent')
         
-        # Return cached if valid and not forced refresh
-        if not refresh and STATS_CACHE["data"] and (current_time - STATS_CACHE["timestamp"] < CACHE_TIMEOUT):
+        # Return cached if valid and not forced refresh and not agent_filter
+        if not refresh and not agent_filter and STATS_CACHE["data"] and (current_time - STATS_CACHE["timestamp"] < CACHE_TIMEOUT):
             print("⚡ Returning cached admin stats")
             return jsonify(STATS_CACHE["data"])
 
-        print("📊 Fetching admin stats from source...")
+        print(f"📊 Fetching admin stats from source (agent={agent_filter})...")
         
         # 1. Try Supabase first
         if SUPABASE_URL:
@@ -974,6 +1010,8 @@ def get_admin_stats():
                 params = {
                     "select": "status,total_amount,confirmation_agent"
                 }
+                if agent_filter:
+                    params["confirmation_agent"] = f"eq.{agent_filter}"
                 
                 response = requests.get(url, headers=headers, params=params, timeout=5)
                 
@@ -1026,13 +1064,17 @@ def get_admin_stats():
         
         # Fallback to local orders if Supabase fails or not configured
         global orders
-        total_orders = len(orders)
-        confirmed_orders = len([o for o in orders if o.get('status') == 'confirmed'])
-        shipped_orders = [o for o in orders if o.get('status') == 'shipped']
+        local_orders_subset = orders
+        if agent_filter:
+            local_orders_subset = [o for o in orders if o.get('confirmation_agent') == agent_filter]
+            
+        total_orders = len(local_orders_subset)
+        confirmed_orders = len([o for o in local_orders_subset if o.get('status') == 'confirmed'])
+        shipped_orders = [o for o in local_orders_subset if o.get('status') == 'shipped']
         total_revenue = sum([float(str(o.get('total_amount') or 0).replace(',', '')) for o in shipped_orders])
         
         agent_stats = {}
-        for o in orders:
+        for o in local_orders_subset:
             if o.get('status') == 'confirmed' and o.get('confirmation_agent'):
                 agent = o.get('confirmation_agent').strip()
                 agent_stats[agent] = agent_stats.get(agent, 0) + 1
@@ -1074,10 +1116,11 @@ def handle_orders():
         limit = int(request.args.get('limit', 30))
         search = request.args.get('search')
         status_filter = request.args.get('status')
+        agent_filter = request.args.get('agent')
         offset = (page - 1) * limit
         
         # Get filtered orders from Supabase
-        supabase_result = get_orders_from_supabase(search=search, status=status_filter, page=page, limit=limit)
+        supabase_result = get_orders_from_supabase(search=search, status=status_filter, agent=agent_filter, page=page, limit=limit)
         
         supabase_orders = []
         total_supabase = 0
@@ -1099,11 +1142,12 @@ def handle_orders():
         local_matches = []
         for o in orders:
             matches_status = not status_filter or o.get('status') == status_filter
+            matches_agent = not agent_filter or o.get('confirmation_agent') == agent_filter
             matches_search = not search or any(
                 search.lower() in str(o.get(field, '')).lower() 
                 for field in ['customer_name', 'customer_phone', 'scan_id']
             )
-            if matches_status and matches_search:
+            if matches_status and matches_agent and matches_search:
                 local_matches.append(o)
 
         # Deduplicate local orders
@@ -1256,9 +1300,10 @@ def handle_orders():
                 "qr_code_data": waveform_data["waveform_data"] if waveform_data else "",  # WAVEFORM METADATA (stored in qr_code_data column)
                 "status": "pending",
                 "payment_method": "COD",
-                "total_amount": 4000.0, # Fixed total: 3500 Product + 500 Delivery
+                "total_amount": float(data.get("total_amount") or (float(frame.get("price", 3500)) + 500.0)),
                 "notes": data.get("notes", ""),
                 "scan_id": scan_id,
+                "confirmation_agent": data.get("confirmation_agent", ""),
                 "created_at": datetime.now().isoformat()
             }
             
@@ -1559,6 +1604,98 @@ def handle_settings():
         print(f"❌ Error managing settings: {e}")
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/admin/login', methods=['POST'])
+def admin_login():
+    """Verify admin or agent credentials"""
+    try:
+        data = request.get_json()
+        email = data.get('email', '').strip()
+        password = data.get('password', '').strip()
+        
+        if not email or not password:
+            return jsonify({"success": False, "error": "Email and password are required"}), 400
+            
+        global admin_credentials
+        # Find user
+        user = next((u for u in admin_credentials if u.get('email') == email), None)
+        if user and user.get('password') == password:
+            return jsonify({
+                "success": True,
+                "role": user.get('role', 'admin'),
+                "agent_name": user.get('agent_name', '')
+            })
+            
+        return jsonify({"success": False, "error": "Invalid email or password"}), 401
+    except Exception as e:
+        print(f"❌ Error in admin_login: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route('/api/admin/users/', methods=['GET', 'POST'])
+def manage_admin_users():
+    """List or add admin credentials (admin only)"""
+    global admin_credentials
+    try:
+        if request.method == 'GET':
+            sanitized = [
+                {
+                    "email": u.get('email'),
+                    "role": u.get('role'),
+                    "agent_name": u.get('agent_name', '')
+                }
+                for u in admin_credentials
+            ]
+            return jsonify(sanitized)
+            
+        elif request.method == 'POST':
+            data = request.get_json()
+            email = data.get('email', '').strip()
+            password = data.get('password', '').strip()
+            role = data.get('role', 'agent').strip()
+            agent_name = data.get('agent_name', '').strip()
+            
+            if not email or not password:
+                return jsonify({"error": "Email and password are required"}), 400
+                
+            # Check duplicate
+            if any(u.get('email') == email for u in admin_credentials):
+                return jsonify({"error": "Email already exists"}), 400
+                
+            admin_credentials.append({
+                "email": email,
+                "password": password,
+                "role": role,
+                "agent_name": agent_name if role == 'agent' else ''
+            })
+            save_credentials_locally()
+            return jsonify({"success": True, "message": "User credentials added successfully"})
+            
+    except Exception as e:
+        print(f"❌ Error managing admin users: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/users/<email>', methods=['DELETE'])
+def delete_admin_user(email):
+    """Delete a user credential (admin only)"""
+    global admin_credentials
+    try:
+        email = email.strip()
+        # Prevent deleting the last admin
+        admins = [u for u in admin_credentials if u.get('role') == 'admin']
+        to_delete = next((u for u in admin_credentials if u.get('email') == email), None)
+        
+        if not to_delete:
+            return jsonify({"error": "User not found"}), 404
+            
+        if to_delete.get('role') == 'admin' and len(admins) <= 1:
+            return jsonify({"error": "Cannot delete the last admin account"}), 400
+            
+        admin_credentials = [u for u in admin_credentials if u.get('email') != email]
+        save_credentials_locally()
+        return jsonify({"success": True, "message": "User credentials deleted successfully"})
+    except Exception as e:
+        print(f"❌ Error deleting user credential: {e}")
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/api/confirmation-agents/<name>', methods=['DELETE'])
 def delete_confirmation_agent(name):
     """Delete a confirmation agent"""
@@ -1592,8 +1729,21 @@ def scan_frame(frame_id):
         
         # Get orders from Supabase to find audio for this frame
         print(f"📥 Fetching orders from Supabase...")
-        supabase_orders = get_orders_from_supabase()
-        print(f"📥 Retrieved {len(supabase_orders)} orders from Supabase")
+        supabase_result = get_orders_from_supabase()
+        supabase_orders = []
+        if supabase_result:
+            supabase_orders = supabase_result.get("orders", [])
+            print(f"📥 Retrieved {len(supabase_orders)} orders from Supabase")
+        else:
+            print("⚠️ Supabase connection failed or paused. Using local persistence.")
+        
+        # Merge with local orders for scanning backup
+        global orders
+        all_orders = list(supabase_orders)
+        existing_ids = {o.get('id') for o in all_orders}
+        for local_o in orders:
+            if local_o.get('id') not in existing_ids:
+                all_orders.append(local_o)
         
         audio_url = None
         waveform_url = None
@@ -1603,7 +1753,7 @@ def scan_frame(frame_id):
         # Find the most recent order for this frame with audio
         print(f"🔍 Searching for orders with frame_id={frame_id} and audio...")
         matching_orders = []
-        for order in supabase_orders:
+        for order in all_orders:
             if order.get('frame_id') == frame_id:
                 matching_orders.append(order)
                 print(f"   Found order {order.get('id')} with frame_id={frame_id}")
@@ -1611,7 +1761,7 @@ def scan_frame(frame_id):
                     print(f"   ✅ Order {order.get('id')} has audio: {order.get('audio_file_url')[:60]}...")
         
         # Sort by created_at and get most recent with audio
-        for order in sorted(supabase_orders, key=lambda x: x.get('created_at', ''), reverse=True):
+        for order in sorted(all_orders, key=lambda x: x.get('created_at', ''), reverse=True):
             if order.get('frame_id') == frame_id and order.get('audio_file_url'):
                 audio_url = order.get('audio_file_url')
                 waveform_url = order.get('qr_code_url', '') or order.get('waveform_url', '')
@@ -1827,7 +1977,11 @@ def get_statistics():
         if (datetime.now() - stats_cache["timestamp"]).total_seconds() < 300:
             return jsonify(stats_cache["data"])
             
-    supabase_orders = get_orders_from_supabase()
+    supabase_result = get_orders_from_supabase()
+    supabase_orders = []
+    if supabase_result:
+        supabase_orders = supabase_result.get("orders", [])
+    
     local_orders = orders
     
     total_orders = len(supabase_orders) + len(local_orders)
@@ -2034,7 +2188,8 @@ if __name__ == '__main__':
     print("  GET  /api/statistics/        - Get statistics")
     print("  GET  /api/test-storage/      - Test Supabase Storage connection")
     print("  GET  /health/                 - Health check (includes storage status)")
-    print(f"\n🌐 Server running on http://localhost:8001")
+    port = int(os.getenv('PORT', 8001))
+    print(f"\n🌐 Server running on http://localhost:{port}")
     print(f"🔗 Supabase URL: {SUPABASE_URL}")
     print(f"🎵 Spotify waveform codes will be generated automatically for audio uploads!")
     print(f"📦 Waveform codes are stored in Supabase Storage (wave_codes bucket)")
@@ -2043,9 +2198,9 @@ if __name__ == '__main__':
     print(f"   1. Create 'wave_codes' bucket in Supabase Storage Dashboard")
     print(f"      → Go to Storage → Create bucket → Name: 'wave_codes' → Set PUBLIC")
     print(f"   2. Create 'api_order' table with columns: audio_file_url, qr_code_url, qr_code_data")
-    print(f"   3. Test storage: GET http://localhost:8001/api/test-storage/")
-    print(f"   4. Check health: GET http://localhost:8001/health/")
+    print(f"   3. Test storage: GET http://localhost:{port}/api/test-storage/")
+    print(f"   4. Check health: GET http://localhost:{port}/health/")
     
     # Disable debug mode to avoid reloader issues
     # When running with Gunicorn, this block is skipped
-    app.run(host='0.0.0.0', port=8001, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=False)

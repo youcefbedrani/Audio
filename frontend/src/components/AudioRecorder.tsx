@@ -19,9 +19,22 @@ export default function AudioRecorder({ onAudioReady }: AudioRecorderProps) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const durationRef = useRef(0);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
+  const [isSupported, setIsSupported] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsSupported(!!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia));
+    }
+  }, []);
+
   const startRecording = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      alert("التسجيل الصوتي المباشر غير مدعوم على هذا المتصفح أو يحتاج اتصالاً آمناً (HTTPS). الرجاء رفع ملف صوتي بدلاً من ذلك.");
+      return;
+    }
     try {
       const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
       setStream(audioStream);
@@ -39,7 +52,7 @@ export default function AudioRecorder({ onAudioReady }: AudioRecorderProps) {
       mediaRecorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: "audio/webm" });
         const url = URL.createObjectURL(blob);
-        const data = { blob, url, duration };
+        const data = { blob, url, duration: durationRef.current };
         setRecordedAudio(data);
         onAudioReady(data);
 
@@ -52,9 +65,11 @@ export default function AudioRecorder({ onAudioReady }: AudioRecorderProps) {
       setIsRecording(true);
 
       // Start timer
+      durationRef.current = 0;
       setDuration(0);
       timerRef.current = setInterval(() => {
-        setDuration(prev => prev + 1);
+        durationRef.current += 1;
+        setDuration(durationRef.current);
       }, 1000);
 
     } catch (err) {
@@ -121,7 +136,11 @@ export default function AudioRecorder({ onAudioReady }: AudioRecorderProps) {
             {isRecording ? (
               <WaveformVisualizer stream={stream} color="#ef4444" />
             ) : (
-              <div className="text-stone-400 text-sm">اضغط على الميكروفون للبدء</div>
+              <div className="text-stone-400 text-sm px-4 text-center">
+                {isSupported 
+                  ? "اضغط على الميكروفون للبدء" 
+                  : "التسجيل المباشر غير مدعوم على اتصال غير آمن (HTTP). الرجاء رفع ملف صوتي."}
+              </div>
             )}
             {isRecording && (
               <div className="absolute top-2 left-2 bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-bold animate-pulse">
@@ -134,7 +153,13 @@ export default function AudioRecorder({ onAudioReady }: AudioRecorderProps) {
             {!isRecording ? (
               <button
                 onClick={startRecording}
-                className="w-16 h-16 rounded-full bg-stone-900 text-white flex items-center justify-center hover:bg-stone-800 transition-colors shadow-lg hover:scale-105 transform duration-200"
+                disabled={!isSupported}
+                className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors shadow-lg hover:scale-105 transform duration-200 ${
+                  isSupported 
+                    ? "bg-stone-900 text-white hover:bg-stone-800" 
+                    : "bg-stone-200 text-stone-400 cursor-not-allowed"
+                }`}
+                title={isSupported ? "بدء التسجيل" : "التسجيل غير مدعوم"}
               >
                 <Mic size={28} />
               </button>

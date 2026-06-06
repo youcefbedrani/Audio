@@ -31,8 +31,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl">
-      <body className={`${cairo.variable} ${amiri.variable} font-cairo antialiased`}>
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <body className={`${cairo.variable} ${amiri.variable} font-cairo antialiased`} suppressHydrationWarning>
         <PixelTracker />
         {children}
       </body>

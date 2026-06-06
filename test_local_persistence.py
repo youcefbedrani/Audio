@@ -1,7 +1,9 @@
 import requests
 import json
 
-BASE_URL = "http://localhost:8001"
+import os
+PORT = os.getenv('PORT', '8180')
+BASE_URL = f"http://localhost:{PORT}"
 
 def test_order_and_scan():
     print("🚀 Testing order creation with local fallback...")
@@ -28,7 +30,7 @@ def test_order_and_scan():
     
     # 2. Test Scan Lookup
     print(f"\n🔍 Testing scan lookup for ID: {scan_id}...")
-    scan_response = requests.get(f"{BASE_URL}/api/scan/{scan_id}/")
+    scan_response = requests.get(f"{BASE_URL}/api/audio/{scan_id}/")
     print(f"Status: {scan_response.status_code}")
     print(f"Response: {json.dumps(scan_response.json(), indent=2)}")
     

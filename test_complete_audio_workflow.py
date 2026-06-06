@@ -7,12 +7,14 @@ import requests
 import json
 import time
 import os
+PORT = os.getenv('PORT', '8180')
+BASE_URL = f"http://localhost:{PORT}"
 
 def test_health():
     """Test API health"""
     print("🔍 Testing API Health...")
     try:
-        response = requests.get("http://localhost:8001/health/")
+        response = requests.get(f"{BASE_URL}/api/health/")
         if response.status_code == 200:
             data = response.json()
             print(f"✅ API Health: {data['status']}")
@@ -30,7 +32,7 @@ def test_frames():
     """Test frames API"""
     print("\n🔍 Testing Frames API...")
     try:
-        response = requests.get("http://localhost:8001/api/frames/")
+        response = requests.get(f"{BASE_URL}/api/frames/")
         if response.status_code == 200:
             frames = response.json()
             print(f"✅ Frames API: Found {len(frames)} frames")
@@ -86,7 +88,7 @@ def test_order_creation_with_audio():
         }
         
         print("   Sending order with audio file...")
-        response = requests.post("http://localhost:8001/api/orders/", data=data, files=files)
+        response = requests.post(f"{BASE_URL}/api/orders/", data=data, files=files)
         
         # Close file
         files["audio_file"][1].close()
@@ -120,7 +122,7 @@ def test_qr_scanning(order_id):
     """Test QR code scanning"""
     print(f"\n🔍 Testing QR Code Scanning for Order {order_id}...")
     try:
-        response = requests.get(f"http://localhost:8001/api/scan/1/")
+        response = requests.get(f"{BASE_URL}/api/scan/1/")
         if response.status_code == 200:
             data = response.json()
             print(f"✅ QR Scan successful!")
@@ -141,11 +143,12 @@ def test_orders_list():
     """Test orders list from Supabase"""
     print("\n🔍 Testing Orders List from Supabase...")
     try:
-        response = requests.get("http://localhost:8001/api/orders/")
+        response = requests.get(f"{BASE_URL}/api/orders/")
         if response.status_code == 200:
-            orders = response.json()
-            print(f"✅ Orders list: Found {len(orders)} orders")
-            for order in orders[-2:]:  # Show last 2 orders
+            data = response.json()
+            orders_list = data.get('orders', data) if isinstance(data, dict) else data
+            print(f"✅ Orders list: Found {len(orders_list)} orders")
+            for order in orders_list[-2:]:  # Show last 2 orders
                 print(f"   - Order {order['id']}: {order['customer_name']} ({order['city']})")
                 if order.get('audio_file_url'):
                     print(f"     Audio: {order['audio_file_url'][:50]}...")
@@ -163,7 +166,7 @@ def test_statistics():
     """Test statistics API"""
     print("\n🔍 Testing Statistics API...")
     try:
-        response = requests.get("http://localhost:8001/api/statistics/")
+        response = requests.get(f"{BASE_URL}/api/statistics/")
         if response.status_code == 200:
             stats = response.json()
             print(f"✅ Statistics retrieved:")
@@ -219,8 +222,8 @@ def main():
     print("   cd mobile && flutter run -d web-server --web-port 8081")
     print("\n🌐 To test website:")
     print("   http://localhost:3000")
-    print("\n🔗 To test API directly:")
-    print("   http://localhost:8001/health/")
+    print(f"\n🔗 To test API directly:")
+    print(f"   {BASE_URL}/api/health/")
 
 if __name__ == "__main__":
     main()

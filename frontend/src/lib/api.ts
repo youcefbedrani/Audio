@@ -34,7 +34,7 @@ export interface CreateOrderResponse {
 
 export const createOrder = async (
   orderData: Order,
-  audioBlob: Blob
+  audioBlob?: Blob
 ): Promise<CreateOrderResponse> => {
   try {
     const formData = new FormData();
@@ -47,11 +47,23 @@ export const createOrder = async (
     formData.append("baladiya", orderData.baladya || orderData.wilaya);
     formData.append("city", orderData.baladya || orderData.wilaya); // Required by backend
     formData.append("frame_id", String(orderData.frame_id));
+    
+    if (orderData.total_amount) {
+      formData.append("total_amount", String(orderData.total_amount));
+    }
+    if (orderData.notes) {
+      formData.append("notes", orderData.notes);
+    }
+    if (orderData.confirmation_agent) {
+      formData.append("confirmation_agent", orderData.confirmation_agent);
+    }
 
-    // Append audio file
-    formData.append("audio_file", audioBlob, "recording.webm");
+    // Append audio file if available
+    if (audioBlob) {
+      formData.append("audio_file", audioBlob, "recording.webm");
+    }
 
-    const response = await axios.post(`${API_URL}/orders/`, formData, {
+    const response = await axios.post(`${API_URL}/orders`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -77,11 +89,12 @@ export const getOrders = async (
   page = 1,
   limit = 30,
   search?: string,
-  status?: string
+  status?: string,
+  agent?: string
 ): Promise<PaginatedOrders> => {
   try {
-    const response = await axios.get(`${API_URL}/orders/`, {
-      params: { page, limit, search, status }
+    const response = await axios.get(`${API_URL}/orders`, {
+      params: { page, limit, search, status, agent }
     });
     // Handle both old array format (fallback) and new paginated format
     if (Array.isArray(response.data)) {
@@ -139,7 +152,7 @@ export const deleteOrder = async (orderId: string | number) => {
 
 export const getConfirmationAgents = async (): Promise<string[]> => {
   try {
-    const response = await axios.get(`${API_URL}/confirmation-agents/`);
+    const response = await axios.get(`${API_URL}/confirmation-agents`);
     return response.data;
   } catch (error) {
     console.error("Error fetching agents:", error);
@@ -149,7 +162,7 @@ export const getConfirmationAgents = async (): Promise<string[]> => {
 
 export const addConfirmationAgent = async (name: string) => {
   try {
-    const response = await axios.post(`${API_URL}/confirmation-agents/`, { name });
+    const response = await axios.post(`${API_URL}/confirmation-agents`, { name });
     return response.data;
   } catch (error) {
     console.error("Error adding agent:", error);
@@ -169,7 +182,7 @@ export const deleteConfirmationAgent = async (name: string) => {
 
 export const getSettings = async (): Promise<Settings> => {
   try {
-    const response = await axios.get(`${API_URL}/settings/`);
+    const response = await axios.get(`${API_URL}/settings`);
     return response.data;
   } catch (error) {
     console.error("Error fetching settings:", error);
@@ -179,7 +192,7 @@ export const getSettings = async (): Promise<Settings> => {
 
 export const updateSettings = async (settings: Settings) => {
   try {
-    const response = await axios.post(`${API_URL}/settings/`, settings);
+    const response = await axios.post(`${API_URL}/settings`, settings);
     return response.data;
   } catch (error) {
     console.error("Error updating settings:", error);
@@ -189,12 +202,34 @@ export const updateSettings = async (settings: Settings) => {
 
 };
 
-export const getAdminStats = async (): Promise<import("./types").AdminStatsData> => {
+export const getAdminStats = async (agent?: string): Promise<import("./types").AdminStatsData> => {
   try {
-    const response = await axios.get(`${API_URL}/admin/stats/`);
+    const response = await axios.get(`${API_URL}/admin/stats`, {
+      params: { agent }
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching admin stats:", error);
     throw error;
   }
+};
+
+export const loginUser = async (credentials: any) => {
+  const response = await axios.post(`${API_URL}/admin/login`, credentials);
+  return response.data;
+};
+
+export const getAdminUsers = async () => {
+  const response = await axios.get(`${API_URL}/admin/users`);
+  return response.data;
+};
+
+export const addAdminUser = async (userData: any) => {
+  const response = await axios.post(`${API_URL}/admin/users`, userData);
+  return response.data;
+};
+
+export const deleteAdminUser = async (email: string) => {
+  const response = await axios.delete(`${API_URL}/admin/users/${encodeURIComponent(email)}`);
+  return response.data;
 };

@@ -29,7 +29,7 @@ export default function UnifiedScanner({ onScan, onClose, isEmbedded = false }: 
                 const worker = await createWorker('eng');
                 await worker.setParameters({
                     tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
-                    tessedit_pageseg_mode: '7', // Single line mode for faster processing
+                    tessedit_pageseg_mode: '7' as any, // Single line mode for faster processing
                 });
                 workerRef.current = worker;
                 setInitializing(false);
